@@ -2,6 +2,7 @@ import argparse
 import csv
 import json
 from collections import defaultdict
+from math import log
 from pathlib import Path
 
 
@@ -11,6 +12,12 @@ ACTIVE_POLICY = {
     "phone_tenure_days": 30,
     "sanctions_hit_action": "Tier 1 review",
     "device_fingerprint_mismatch_action": "manual_review",
+}
+
+TIER_COMPLETION = {
+    "tier_1_sar_review": 0.61,
+    "tier_2_step_up": 0.74,
+    "tier_3_reverify": 0.89,
 }
 
 
@@ -25,13 +32,26 @@ def normalize(row):
     row.setdefault("ssn_velocity_group", "")
     row.setdefault("monitoring_trigger", "")
     row.setdefault("monitoring_resolution_hours", 0)
+    row.setdefault("re_review_outcome", "")
+    row.setdefault("review_reason_codes", "CLEAN")
     row.setdefault("mobile_risk_profile", "mobile_native" if row.get("device") in {"ios", "android"} else "web_high_variance")
+    for field in [
+        "kyc_ssn_present",
+        "kyc_ssn_verified",
+        "kyc_address_verified",
+        "kyc_dob_present",
+        "kyc_dob_verified",
+        "kyc_selfie_match_passed",
+    ]:
+        row.setdefault(field, 1)
 
     int_fields = [
         "vendor_flagged", "commercial_po_box", "sanctions_hit", "doc_mismatch",
         "device_fingerprint_mismatch", "phone_tenure_days", "ip_risk_score",
         "name_match_score", "confirmed_fraud", "queue_minutes",
         "monitoring_resolution_hours", "sop_override", "missing_kyc_attribute",
+        "kyc_ssn_present", "kyc_ssn_verified", "kyc_address_verified",
+        "kyc_dob_present", "kyc_dob_verified", "kyc_selfie_match_passed",
     ]
     float_fields = ["vendor_match_rate", "active_balance", "chargeoff_amount"]
     for field in int_fields:
@@ -82,9 +102,9 @@ def lookback_population(rows):
                 "accounts": len(members),
                 "active_balance": round(sum(row["active_balance"] for row in members), 2),
                 "chargeoff": round(sum(row["chargeoff_amount"] for row in members), 2),
-                "completion_rate": round(0.62 + (index * 0.11), 2),
+                "completion_rate": TIER_COMPLETION[tier],
             }
-            for index, (tier, members) in enumerate(tiers.items())
+            for tier, members in tiers.items()
         },
     }
 
@@ -183,42 +203,55 @@ def threshold_simulation(rows):
 
 def funnel(rows):
     steps = ["identity_form", "ssn_check", "address_check", "doc_upload", "selfie_match", "approved"]
-    abandoned_by_step = defaultdict(int)
-    for row in rows:
-        if row["drop_step"]:
-            abandoned_by_step[row["drop_step"]] += 1
+    step_rank = {step: index for index, step in enumerate(steps)}
 
-    remaining = len(rows)
     series = []
     for step in steps:
         if step == "approved":
-            remaining = sum(1 for row in rows if row["final_status"] == "approved")
+            applications = sum(1 for row in rows if row["final_status"] == "approved")
         else:
-            remaining -= abandoned_by_step[step]
-        series.append({"step": step, "applications": max(remaining, 0), "conversion_rate": rate(max(remaining, 0), len(rows))})
+            applications = sum(
+                1 for row in rows
+                if not row["drop_step"] or step_rank[row["drop_step"]] >= step_rank[step]
+            )
+        series.append({"step": step, "applications": applications, "conversion_rate": rate(applications, len(rows))})
     return series
 
 
 def top_rules(rows):
+    ip_thresh = ACTIVE_POLICY["ip_risk_threshold"]
+    name_thresh = ACTIVE_POLICY["name_match_threshold"]
+    tenure_thresh = ACTIVE_POLICY["phone_tenure_days"]
+
     rules = {
-        "phone_tenure_days < 30": lambda row: row["phone_tenure_days"] < 30,
-        "ip_risk_score > 75": lambda row: row["ip_risk_score"] > 75,
-        "name_match_score < 83": lambda row: row["name_match_score"] < 83,
+        f"phone_tenure < {tenure_thresh}d": lambda row: row["phone_tenure_days"] < tenure_thresh,
+        f"ip_risk_score > {ip_thresh}": lambda row: row["ip_risk_score"] > ip_thresh,
+        f"name_match < {name_thresh}": lambda row: row["name_match_score"] < name_thresh,
         "commercial_po_box": lambda row: row["commercial_po_box"] == 1,
         "sanctions_hit": lambda row: row["sanctions_hit"] == 1,
         "doc_mismatch": lambda row: row["doc_mismatch"] == 1,
-        "device_fingerprint_mismatch": lambda row: row["device_fingerprint_mismatch"] == 1,
+        "device_fp_mismatch": lambda row: row["device_fingerprint_mismatch"] == 1,
         "ssn_velocity_30d": lambda row: bool(row["ssn_velocity_group"]),
     }
     output = []
+    total = len(rows)
+    total_fraud = sum(row["confirmed_fraud"] for row in rows)
+    non_fraud_total = total - total_fraud
+
     for name, predicate in rules.items():
         hits = [row for row in rows if predicate(row)]
-        fraud = sum(row["confirmed_fraud"] for row in hits)
+        non_hits = [row for row in rows if not predicate(row)]
+        fraud_in_hits = sum(row["confirmed_fraud"] for row in hits)
+        fraud_missed = sum(row["confirmed_fraud"] for row in non_hits)
+        non_fraud_in_hits = len(hits) - fraud_in_hits
         output.append({
             "rule": name,
             "hits": len(hits),
-            "fraud_capture_rate": rate(fraud, len(hits)),
-            "false_positive_ratio": rate(len(hits) - fraud, len(hits)),
+            "hit_rate": rate(len(hits), total),
+            "fraud_capture_rate": rate(fraud_in_hits, total_fraud),
+            "false_positive_ratio": rate(non_fraud_in_hits, non_fraud_total),
+            "precision": rate(fraud_in_hits, len(hits)),
+            "fraud_leakage_if_removed": rate(fraud_missed, total),
         })
     return sorted(output, key=lambda item: item["hits"], reverse=True)
 
@@ -264,6 +297,14 @@ def monitoring(rows):
         "triggered_accounts": len(triggered),
         "re_review_rate": rate(len(triggered), len(approved)),
         "triggers": trigger_rows,
+        "outcomes": [
+            {
+                "outcome": outcome,
+                "accounts": sum(1 for row in triggered if row["re_review_outcome"] == outcome),
+                "share": rate(sum(1 for row in triggered if row["re_review_outcome"] == outcome), len(triggered)),
+            }
+            for outcome in sorted({row["re_review_outcome"] for row in triggered if row["re_review_outcome"]})
+        ],
     }
 
 
@@ -281,6 +322,84 @@ def device_risk(rows):
         }
         for device, members in sorted(grouped.items())
     ]
+
+
+def identity_attribute_completeness(rows):
+    attributes = [
+        ("SSN present", "kyc_ssn_present"),
+        ("SSN verified", "kyc_ssn_verified"),
+        ("Address verified", "kyc_address_verified"),
+        ("DOB present", "kyc_dob_present"),
+        ("DOB verified", "kyc_dob_verified"),
+        ("Selfie match passed", "kyc_selfie_match_passed"),
+    ]
+    grouped = defaultdict(list)
+    for row in rows:
+        grouped[row["device"]].append(row)
+
+    output = []
+    for device, members in sorted(grouped.items()):
+        for label, field in attributes:
+            output.append({
+                "segment": device,
+                "attribute": label,
+                "completion_rate": rate(sum(row[field] for row in members), len(members)),
+            })
+    return output
+
+
+def population_stability_index(rows, feature, n_bins=10):
+    sorted_rows = sorted(rows, key=lambda row: row["created_at"])
+    mid = len(sorted_rows) // 2
+    baseline_vals = [row[feature] for row in sorted_rows[:mid] if isinstance(row[feature], (int, float))]
+    compare_vals = [row[feature] for row in sorted_rows[mid:] if isinstance(row[feature], (int, float))]
+
+    if not baseline_vals or not compare_vals:
+        return {"feature": feature, "psi": None, "status": "insufficient_data", "bins": []}
+
+    all_vals = baseline_vals + compare_vals
+    min_v, max_v = min(all_vals), max(all_vals)
+    if min_v == max_v:
+        return {"feature": feature, "psi": 0.0, "status": "stable", "bins": []}
+
+    bin_edges = [min_v + i * (max_v - min_v) / n_bins for i in range(n_bins + 1)]
+    bin_edges[-1] += 1e-9
+
+    def bin_counts(values):
+        counts = [0] * n_bins
+        for value in values:
+            for index in range(n_bins):
+                if bin_edges[index] <= value < bin_edges[index + 1]:
+                    counts[index] += 1
+                    break
+        return counts
+
+    base_counts = bin_counts(baseline_vals)
+    comp_counts = bin_counts(compare_vals)
+    n_base, n_comp = len(baseline_vals), len(compare_vals)
+
+    psi = 0.0
+    bins = []
+    for index in range(n_bins):
+        base_pct = max(base_counts[index] / n_base, 1e-6)
+        comp_pct = max(comp_counts[index] / n_comp, 1e-6)
+        bucket_psi = (comp_pct - base_pct) * log(comp_pct / base_pct)
+        psi += bucket_psi
+        bins.append({
+            "bin_low": round(bin_edges[index], 2),
+            "bin_high": round(bin_edges[index + 1], 2),
+            "baseline_pct": round(base_pct, 4),
+            "compare_pct": round(comp_pct, 4),
+            "bucket_psi": round(bucket_psi, 4),
+        })
+
+    status = "stable" if psi < 0.10 else ("moderate_shift" if psi < 0.25 else "major_shift_recalibrate")
+    return {"feature": feature, "psi": round(psi, 4), "status": status, "bins": bins}
+
+
+def population_monitoring(rows):
+    features = ["ip_risk_score", "name_match_score", "phone_tenure_days", "vendor_latency_ms"]
+    return [population_stability_index(rows, feature) for feature in features]
 
 
 def summarize(rows):
@@ -317,6 +436,8 @@ def main():
         "sanctions": sanctions_screening(rows),
         "monitoring": monitoring(rows),
         "device_risk": device_risk(rows),
+        "identity_completeness": identity_attribute_completeness(rows),
+        "population_stability": population_monitoring(rows),
         "active_policy": ACTIVE_POLICY,
     }
 

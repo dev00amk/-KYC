@@ -126,9 +126,15 @@
     </section>
 
     <section id="vendors" class="section">
-      <div class="panel">
-        <h2>Vendor SLA And Control Drift</h2>
-        <div id="vendorTable"></div>
+      <div class="grid two">
+        <div class="panel">
+          <h2>Vendor SLA And Control Drift</h2>
+          <div id="vendorTable"></div>
+        </div>
+        <div class="panel">
+          <h2>Population Stability</h2>
+          <div id="psiTable"></div>
+        </div>
       </div>
     </section>
 
@@ -163,13 +169,23 @@
           <h2>Trigger Diagnostics</h2>
           <div id="monitoringTable"></div>
         </div>
+        <div class="panel">
+          <h2>Re-review Outcomes</h2>
+          <div id="outcomeTable"></div>
+        </div>
       </div>
     </section>
 
     <section id="audit" class="section">
-      <div class="panel">
-        <h2>Audit Readiness</h2>
-        <div id="auditReadiness"></div>
+      <div class="grid two">
+        <div class="panel">
+          <h2>Audit Readiness</h2>
+          <div id="auditReadiness"></div>
+        </div>
+        <div class="panel">
+          <h2>Attribute Completeness</h2>
+          <div id="completenessTable"></div>
+        </div>
       </div>
     </section>
   </main>
@@ -263,6 +279,17 @@
       document.querySelector("#vendorTable").innerHTML = table(["Week", "Vendor", "Apps", "Match Rate", "Latency", "FPR", "FNR"], rows);
     }
 
+    function renderPsi(populationStability) {
+      document.querySelector("#psiTable").innerHTML = table(
+        ["Feature", "PSI", "Status"],
+        populationStability.map(item => [
+          item.feature,
+          item.psi === null ? "n/a" : item.psi,
+          item.status.replaceAll("_", " "),
+        ])
+      );
+    }
+
     function renderRules(rules, scenarios, policy, deviceRisk) {
       document.querySelector("#policyTable").innerHTML = table(
         ["Policy Control", "Active Setting"],
@@ -273,8 +300,15 @@
         deviceRisk.map(item => [item.device, formatNum(item.applications), formatPct(item.manual_review_rate), formatPct(item.fraud_rate), item.avg_ip_risk_score])
       );
       document.querySelector("#ruleTable").innerHTML = table(
-        ["Rule", "Hits", "Fraud Capture", "FPR"],
-        rules.map(item => [item.rule, formatNum(item.hits), formatPct(item.fraud_capture_rate), formatPct(item.false_positive_ratio)])
+        ["Rule", "Hits", "Recall", "Precision", "FPR", "Leakage If Removed"],
+        rules.map(item => [
+          item.rule,
+          formatNum(item.hits),
+          formatPct(item.fraud_capture_rate),
+          formatPct(item.precision),
+          formatPct(item.false_positive_ratio),
+          formatPct(item.fraud_leakage_if_removed),
+        ])
       );
       document.querySelector("#scenarioTable").innerHTML = table(
         ["Name Tol.", "IP Risk", "Manual Reviews", "Savings", "Leakage"],
@@ -304,9 +338,13 @@
           formatNum(item.prior_onboarding_flags),
         ])
       );
+      document.querySelector("#outcomeTable").innerHTML = table(
+        ["Outcome", "Accounts", "Share"],
+        monitoring.outcomes.map(item => [item.outcome.replaceAll("_", " "), formatNum(item.accounts), formatPct(item.share)])
+      );
     }
 
-    function renderAudit(summary, lookback, monitoring) {
+    function renderAudit(summary, lookback, monitoring, completeness) {
       const status = summary.missing_kyc_rate < 0.03 && summary.sop_deviation_rate < 0.05 ? "Ready for audit packet" : "Needs audit remediation";
       document.querySelector("#auditReadiness").innerHTML = `
         <p class="${status.startsWith("Ready") ? "good" : "warn"}">${status}</p>
@@ -317,6 +355,10 @@
           ["Ongoing monitoring re-review", formatPct(monitoring.re_review_rate), "Post-approval lifecycle monitoring coverage"],
         ])}
       `;
+      document.querySelector("#completenessTable").innerHTML = table(
+        ["Segment", "Attribute", "Completion"],
+        completeness.map(item => [item.segment, item.attribute, formatPct(item.completion_rate)])
+      );
     }
 
     document.querySelectorAll(".tab").forEach(button => {
@@ -337,9 +379,10 @@
         renderLookback(data.lookback);
         renderSanctions(data.sanctions);
         renderVendors(data.vendor_weekly);
+        renderPsi(data.population_stability);
         renderRules(data.rules, data.threshold_scenarios, data.active_policy, data.device_risk);
         renderMonitoring(data.monitoring);
-        renderAudit(data.summary, data.lookback, data.monitoring);
+        renderAudit(data.summary, data.lookback, data.monitoring, data.identity_completeness);
       })
       .catch(error => {
         document.querySelector("main").innerHTML = `<div class="panel"><strong>Dashboard data failed to load.</strong><p>${error}</p></div>`;

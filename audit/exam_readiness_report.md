@@ -10,6 +10,8 @@
 | Phone tenure | Manual review below 30 days | 2026-03-15 | Identity Risk Strategy |
 | Device fingerprint mismatch | Manual review when mismatch is present | 2026-04-01 | Fraud Engineering |
 | Vendor drift monitor | Alert at 15% match-rate drop or latency spike | 2026-03-22 | Vendor Governance |
+| Population stability monitor | PSI above 0.10 requires investigation; above 0.25 requires recalibration review | 2026-04-01 | Model Risk |
+| Decision reason-code audit trail | Every decision stores `review_reason_codes`, including `CLEAN` approvals | 2026-04-01 | Fraud Decisioning |
 
 ## 2. Population Under Review
 

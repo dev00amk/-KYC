@@ -41,6 +41,8 @@ sql/
   03_rule_queue_diagnostics.sql
   04_funnel_audit_readiness.sql
   05_ongoing_monitoring_triggers.sql
+  06_control_effectiveness_scorecard.sql
+  07_psi_feature_drift.sql
 tests/
   test_analytics.py             Unit tests for core analytics behavior
 ASSUMPTIONS.md                  Magic-number documentation
@@ -77,13 +79,23 @@ Then walk through the artifacts:
 4. Vendors: baseline vs. challenger identity provider health, including false negative rate and recommended action.
 5. Rules: current policy plus simulations showing queue and leakage tradeoffs.
 6. Monitoring: post-approval trigger rates and whether onboarding flags predicted lifecycle risk.
-7. Audit Artifacts: decision memo, policy log, assumptions, and exam readiness report.
+7. Population Stability: PSI checks showing whether feature distributions have shifted enough to invalidate thresholds.
+8. Audit Artifacts: decision memo, policy log, assumptions, and exam readiness report.
 
 ## Decision Example
 
 The threshold simulation supports a concrete operating recommendation:
 
 > Lowering name-match tolerance from 90 to 83 while increasing IP-risk tolerance to 80 reduces manual reviews while keeping fraud leakage inside the team's risk appetite. The decision is paired with weekly vendor drift monitoring so future performance drops do not remain invisible.
+
+## Model Limitations and Production Gap
+
+This project demonstrates control logic and governance patterns on synthetic data. Four gaps exist between this model and a production deployment:
+
+1. Feature distributions are calibrated to produce a realistic fraud rate but are not fit to empirical customer data. PSI monitoring is included to flag when real distributions deviate from this baseline.
+2. The decisioning engine is a simple rule-based framework with reason codes. Production engines at digital banks typically combine scored models with hard regulatory rules for bright-line controls like sanctions screening.
+3. Vendor match rate is modeled as a weekly-stable vendor property. In production it varies by demographic and document segment, which creates fairness and disparate-impact monitoring requirements.
+4. The SAR workflow is represented by remediation tiers. In production this connects to a case-management system and requires a 30-day filing clock from detection date.
 
 ## SQL Notes
 

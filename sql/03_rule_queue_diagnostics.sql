@@ -39,7 +39,7 @@ SELECT
     AVG(simulated_manual_review) AS manual_review_rate,
     SUM(CASE WHEN simulated_manual_review = 0 AND confirmed_fraud = 1 THEN 1 ELSE 0 END) * 1.0 / COUNT(*) AS fraud_leakage_rate,
     PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY CASE WHEN simulated_manual_review = 1 THEN queue_minutes END) AS p95_queue_minutes,
-    (MAX(baseline.baseline_manual_reviews) - SUM(simulated_manual_review)) * 0.22 * 34 AS estimated_monthly_savings
+    GREATEST(0, (MAX(baseline.baseline_manual_reviews) - SUM(simulated_manual_review))) * 0.22 * 34 AS estimated_monthly_savings
 FROM simulated
 CROSS JOIN baseline
 GROUP BY name_match_threshold, ip_risk_threshold
