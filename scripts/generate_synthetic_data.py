@@ -14,8 +14,6 @@ LAST_NAMES = [
     "Martinez", "Davis", "Wilson", "Lee", "Anderson", "Thomas", "Moore",
 ]
 STATES = ["CA", "TX", "NY", "FL", "IL", "GA", "AZ", "NC", "WA", "OH"]
-DEVICES = ["ios", "android", "web"]
-STEPS = ["identity_form", "ssn_check", "address_check", "doc_upload", "selfie_match", "approved"]
 VENDORS = ["baseline_id", "challenger_id"]
 
 
@@ -34,27 +32,55 @@ def weighted_choice(options):
     return options[-1][0]
 
 
+def device_adjusted_ip_risk(device: str) -> int:
+    means = {"ios": 33, "android": 36, "web": 51}
+    return min(100, max(0, int(random.gauss(means[device], 19))))
+
+
+def monitoring_trigger_for(final_status, confirmed_fraud, active_balance):
+    if final_status != "approved":
+        return "", 0
+    trigger = ""
+    if confirmed_fraud and chance(0.6):
+        trigger = "chargeback_dispute"
+    elif active_balance > 2000 and chance(0.04):
+        trigger = "velocity_flag"
+    elif chance(0.015):
+        trigger = "address_change_30d"
+    elif chance(0.008):
+        trigger = "sanctions_rescan_hit"
+    if not trigger:
+        return "", 0
+    return trigger, max(2, int(random.gauss(36 if trigger == "sanctions_rescan_hit" else 54, 18)))
+
+
 def generate_rows(n: int, seed: int):
     random.seed(seed)
     start = datetime(2026, 1, 1)
+    ssn_reuse_pool = [f"SSN-GROUP-{i:03d}" for i in range(1, 70)]
 
     for i in range(1, n + 1):
         created_at = start + timedelta(days=random.randint(0, 118), minutes=random.randint(0, 1439))
         week_start = created_at - timedelta(days=created_at.weekday())
         glitch_window = datetime(2026, 1, 15) <= created_at <= datetime(2026, 3, 20)
 
-        commercial_po_box = chance(0.035)
-        ofac_partial = chance(0.025)
-        doc_mismatch = chance(0.07)
-        phone_tenure_days = random.randint(0, 730)
-        ip_risk_score = min(100, max(0, int(random.gauss(38, 22))))
-        name_match_score = min(100, max(50, int(random.gauss(91, 6))))
         device = weighted_choice([("ios", 48), ("android", 42), ("web", 10)])
+        mobile_risk_profile = "mobile_native" if device in {"ios", "android"} else "web_high_variance"
+        commercial_po_box = chance(0.035)
+        sanctions_hit = chance(0.025)
+        doc_mismatch = chance(0.07)
+        device_fingerprint_mismatch = chance(0.042 if device == "web" else 0.022)
+        ssn_velocity_group = random.choice(ssn_reuse_pool) if chance(0.028) else ""
+        phone_tenure_days = random.randint(0, 730)
+        ip_risk_score = device_adjusted_ip_risk(device)
+        name_match_score = min(100, max(50, int(random.gauss(91, 6))))
 
         true_high_risk = (
             commercial_po_box
-            or ofac_partial
+            or sanctions_hit
             or doc_mismatch
+            or device_fingerprint_mismatch
+            or bool(ssn_velocity_group)
             or phone_tenure_days < 14
             or ip_risk_score > 82
             or name_match_score < 78
@@ -62,8 +88,10 @@ def generate_rows(n: int, seed: int):
 
         fraud_probability = 0.008
         fraud_probability += 0.08 if commercial_po_box else 0
-        fraud_probability += 0.18 if ofac_partial else 0
+        fraud_probability += 0.18 if sanctions_hit else 0
         fraud_probability += 0.05 if doc_mismatch else 0
+        fraud_probability += 0.06 if device_fingerprint_mismatch else 0
+        fraud_probability += 0.07 if ssn_velocity_group else 0
         fraud_probability += 0.03 if phone_tenure_days < 14 else 0
         fraud_probability += 0.05 if ip_risk_score > 82 else 0
         fraud_probability += 0.04 if name_match_score < 78 else 0
@@ -71,9 +99,10 @@ def generate_rows(n: int, seed: int):
 
         baseline_reject = true_high_risk or (ip_risk_score > 70 and phone_tenure_days < 30)
         challenger_reject = (
-            ofac_partial
+            sanctions_hit
             or doc_mismatch
             or commercial_po_box
+            or device_fingerprint_mismatch
             or (ip_risk_score > 84 and phone_tenure_days < 21)
             or name_match_score < 74
         )
@@ -87,7 +116,7 @@ def generate_rows(n: int, seed: int):
             vendor_match_rate -= random.uniform(0.08, 0.17)
 
         engine_action = "manual_review" if vendor_flagged else "instant_approve"
-        if glitch_window and engine_action == "manual_review" and (commercial_po_box or ofac_partial):
+        if glitch_window and engine_action == "manual_review" and (commercial_po_box or sanctions_hit):
             engine_action = "instant_approve"
 
         if engine_action == "instant_approve":
@@ -103,6 +132,9 @@ def generate_rows(n: int, seed: int):
 
         active_balance = round(random.uniform(0, 3500), 2) if final_status == "approved" else 0
         chargeoff_amount = round(random.uniform(25, 1400), 2) if confirmed_fraud and final_status == "approved" else 0
+        monitoring_trigger, monitoring_resolution_hours = monitoring_trigger_for(
+            final_status, confirmed_fraud, active_balance
+        )
         sop_override = chance(0.045 if engine_action == "manual_review" else 0.008)
         missing_kyc_attribute = chance(0.022)
 
@@ -114,13 +146,16 @@ def generate_rows(n: int, seed: int):
             "last_name": random.choice(LAST_NAMES),
             "state": random.choice(STATES),
             "device": device,
+            "mobile_risk_profile": mobile_risk_profile,
             "vendor": vendor,
             "vendor_flagged": int(vendor_flagged),
             "vendor_latency_ms": max(120, vendor_latency_ms),
             "vendor_match_rate": round(max(0.45, min(0.99, vendor_match_rate)), 4),
             "commercial_po_box": int(commercial_po_box),
-            "ofac_partial": int(ofac_partial),
+            "sanctions_hit": int(sanctions_hit),
             "doc_mismatch": int(doc_mismatch),
+            "device_fingerprint_mismatch": int(device_fingerprint_mismatch),
+            "ssn_velocity_group": ssn_velocity_group,
             "phone_tenure_days": phone_tenure_days,
             "ip_risk_score": ip_risk_score,
             "name_match_score": name_match_score,
@@ -131,13 +166,15 @@ def generate_rows(n: int, seed: int):
             "drop_step": drop_step,
             "active_balance": active_balance,
             "chargeoff_amount": chargeoff_amount,
+            "monitoring_trigger": monitoring_trigger,
+            "monitoring_resolution_hours": monitoring_resolution_hours,
             "sop_override": int(sop_override),
             "missing_kyc_attribute": int(missing_kyc_attribute),
         }
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate synthetic KYC onboarding data.")
+    parser = argparse.ArgumentParser(description="Generate synthetic KYC lifecycle data.")
     parser.add_argument("--rows", type=int, default=8000)
     parser.add_argument("--seed", type=int, default=326)
     parser.add_argument("--output", default="data/kyc_applications.csv")

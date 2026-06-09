@@ -20,7 +20,8 @@ simulated AS (
               OR app.ip_risk_score > thresholds.ip_risk_threshold
               OR app.phone_tenure_days < 30
               OR app.commercial_po_box = 1
-              OR app.ofac_partial = 1
+              OR app.sanctions_hit = 1
+              OR app.device_fingerprint_mismatch = 1
             THEN 1 ELSE 0
         END AS simulated_manual_review
     FROM kyc_applications app

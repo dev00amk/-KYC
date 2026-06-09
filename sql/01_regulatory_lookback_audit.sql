@@ -1,4 +1,4 @@
--- Regulatory lookback audit for instant approvals with KYC control exceptions.
+-- Regulatory lookback audit for instant approvals with KYC and sanctions exceptions.
 -- Dialect: warehouse-friendly ANSI SQL; adapt date functions for Snowflake/BigQuery/Redshift.
 
 WITH application_base AS (
@@ -9,7 +9,7 @@ WITH application_base AS (
         engine_action,
         final_status,
         commercial_po_box,
-        ofac_partial,
+        sanctions_hit,
         active_balance,
         chargeoff_amount,
         confirmed_fraud
@@ -21,7 +21,7 @@ vendor_flags AS (
     SELECT
         application_id,
         MAX(CASE WHEN payload_key = 'address_type' AND payload_value = 'commercial_po_box' THEN 1 ELSE 0 END) AS vendor_po_box_flag,
-        MAX(CASE WHEN payload_key = 'ofac_result' AND payload_value IN ('partial_match', 'possible_match') THEN 1 ELSE 0 END) AS vendor_ofac_partial
+        MAX(CASE WHEN payload_key = 'sanctions_result' AND payload_value IN ('partial_match', 'possible_match') THEN 1 ELSE 0 END) AS vendor_sanctions_hit
     FROM vendor_payload_logs
     WHERE created_at >= DATE '2026-01-01'
       AND created_at < DATE '2026-04-01'
@@ -36,20 +36,20 @@ control_bypasses AS (
         app.chargeoff_amount,
         app.confirmed_fraud,
         COALESCE(flags.vendor_po_box_flag, app.commercial_po_box) AS po_box_flag,
-        COALESCE(flags.vendor_ofac_partial, app.ofac_partial) AS ofac_partial_flag
+        COALESCE(flags.vendor_sanctions_hit, app.sanctions_hit) AS sanctions_hit_flag
     FROM application_base app
     LEFT JOIN vendor_flags flags USING (application_id)
     WHERE app.engine_action = 'instant_approve'
       AND (
           COALESCE(flags.vendor_po_box_flag, app.commercial_po_box) = 1
-          OR COALESCE(flags.vendor_ofac_partial, app.ofac_partial) = 1
+          OR COALESCE(flags.vendor_sanctions_hit, app.sanctions_hit) = 1
       )
 ),
 remediation_tiers AS (
     SELECT
         *,
         CASE
-            WHEN ofac_partial_flag = 1 OR confirmed_fraud = 1 OR chargeoff_amount > 0
+            WHEN sanctions_hit_flag = 1 OR confirmed_fraud = 1 OR chargeoff_amount > 0
                 THEN 'Tier 1 - SAR review and account block'
             WHEN po_box_flag = 1 AND active_balance > 250
                 THEN 'Tier 2 - freeze and step-up document request'

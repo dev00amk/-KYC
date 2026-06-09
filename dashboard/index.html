@@ -30,6 +30,7 @@
       padding: 22px 28px;
     }
     h1 { margin: 0 0 6px; font-size: 28px; font-weight: 760; }
+    h2 { margin: 0 0 12px; font-size: 18px; }
     p { margin: 0; color: var(--muted); line-height: 1.45; }
     main { padding: 22px 28px 40px; max-width: 1440px; margin: 0 auto; }
     .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
@@ -45,7 +46,8 @@
     .tab.active { border-color: var(--blue); color: var(--blue); box-shadow: inset 0 0 0 1px var(--blue); }
     .grid { display: grid; gap: 14px; }
     .kpis { grid-template-columns: repeat(7, minmax(130px, 1fr)); }
-    .two { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
+    .two { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -70,7 +72,7 @@
     .note { color: var(--muted); font-size: 13px; margin-top: 8px; }
     @media (max-width: 980px) {
       main, header { padding-left: 16px; padding-right: 16px; }
-      .kpis, .two { grid-template-columns: 1fr; }
+      .kpis, .two, .three { grid-template-columns: 1fr; }
       .bar-row { grid-template-columns: 120px 1fr 58px; }
       table { font-size: 12px; }
     }
@@ -79,14 +81,16 @@
 <body>
   <header>
     <h1>KYC Risk Control Health</h1>
-    <p>Portfolio dashboard for regulatory lookbacks, identity vendor drift, rule threshold tuning, and audit readiness.</p>
+    <p>Lifecycle control framework for onboarding, ongoing monitoring, vendor governance, sanctions screening, policy tuning, and audit readiness.</p>
   </header>
   <main>
     <nav class="tabs" aria-label="Dashboard tabs">
       <button class="tab active" data-tab="overview">Overview</button>
       <button class="tab" data-tab="lookback">Lookback</button>
+      <button class="tab" data-tab="sanctions">Sanctions</button>
       <button class="tab" data-tab="vendors">Vendors</button>
       <button class="tab" data-tab="rules">Rules</button>
+      <button class="tab" data-tab="monitoring">Monitoring</button>
       <button class="tab" data-tab="audit">Audit</button>
     </nav>
 
@@ -117,6 +121,10 @@
       </div>
     </section>
 
+    <section id="sanctions" class="section">
+      <div id="sanctionsKpis" class="grid three"></div>
+    </section>
+
     <section id="vendors" class="section">
       <div class="panel">
         <h2>Vendor SLA And Control Drift</h2>
@@ -127,12 +135,33 @@
     <section id="rules" class="section">
       <div class="grid two">
         <div class="panel">
+          <h2>Current Policy</h2>
+          <div id="policyTable"></div>
+        </div>
+        <div class="panel">
+          <h2>Device Channel Risk</h2>
+          <div id="deviceTable"></div>
+        </div>
+        <div class="panel">
           <h2>Rule Effectiveness</h2>
           <div id="ruleTable"></div>
         </div>
         <div class="panel">
           <h2>Threshold Simulation Playground</h2>
           <div id="scenarioTable"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="monitoring" class="section">
+      <div class="grid two">
+        <div class="panel">
+          <h2>Ongoing Monitoring Summary</h2>
+          <div id="monitoringSummary"></div>
+        </div>
+        <div class="panel">
+          <h2>Trigger Diagnostics</h2>
+          <div id="monitoringTable"></div>
         </div>
       </div>
     </section>
@@ -154,6 +183,10 @@
       return `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
     }
 
+    function metric(label, value, note = "") {
+      return `<div class="panel"><div class="metric-label">${label}</div><div class="metric-value">${value}</div>${note ? `<p class="note">${note}</p>` : ""}</div>`;
+    }
+
     function renderKpis(summary) {
       const kpis = [
         ["Applications", formatNum(summary.applications)],
@@ -164,12 +197,7 @@
         ["SOP Deviation", formatPct(summary.sop_deviation_rate)],
         ["Missing KYC", formatPct(summary.missing_kyc_rate)],
       ];
-      document.querySelector("#kpis").innerHTML = kpis.map(([label, value]) => `
-        <div class="panel">
-          <div class="metric-label">${label}</div>
-          <div class="metric-value">${value}</div>
-        </div>
-      `).join("");
+      document.querySelector("#kpis").innerHTML = kpis.map(([label, value]) => metric(label, value)).join("");
     }
 
     function renderFunnel(funnel) {
@@ -193,6 +221,7 @@
         <div class="panel alert">
           <strong>${alert.message}</strong>
           <p>${alert.vendor} on ${alert.week_start}: match ${formatPct(alert.match_rate_change)}, latency ${formatPct(alert.latency_change)}</p>
+          <p class="note">${alert.vendor_recommendation}</p>
         </div>
       `).join("");
     }
@@ -208,8 +237,17 @@
         formatNum(item.accounts),
         formatMoney(item.active_balance),
         formatMoney(item.chargeoff),
+        formatPct(item.completion_rate),
       ]);
-      document.querySelector("#tiers").innerHTML = table(["Tier", "Accounts", "Active Balance", "Chargeoff"], rows);
+      document.querySelector("#tiers").innerHTML = table(["Tier", "Accounts", "Active Balance", "Chargeoff", "Complete"], rows);
+    }
+
+    function renderSanctions(sanctions) {
+      document.querySelector("#sanctionsKpis").innerHTML = [
+        metric("Screening Hit Rate", formatPct(sanctions.screening_hit_rate)),
+        metric("False Positive Rate", formatPct(sanctions.false_positive_rate)),
+        metric("Tier 1 Remediation", formatNum(sanctions.tier_1_remediation_count), `Avg SAR referral proxy: ${sanctions.avg_time_to_sar_referral_hours} hours`),
+      ].join("");
     }
 
     function renderVendors(series) {
@@ -220,11 +258,20 @@
         `${(item.match_rate * 100).toFixed(1)}%`,
         `${Math.round(item.latency_ms)} ms`,
         formatPct(item.false_positive_ratio),
+        formatPct(item.vendor_false_negative_rate),
       ]);
-      document.querySelector("#vendorTable").innerHTML = table(["Week", "Vendor", "Apps", "Match Rate", "Latency", "FPR"], rows);
+      document.querySelector("#vendorTable").innerHTML = table(["Week", "Vendor", "Apps", "Match Rate", "Latency", "FPR", "FNR"], rows);
     }
 
-    function renderRules(rules, scenarios) {
+    function renderRules(rules, scenarios, policy, deviceRisk) {
+      document.querySelector("#policyTable").innerHTML = table(
+        ["Policy Control", "Active Setting"],
+        Object.entries(policy).map(([key, value]) => [key.replaceAll("_", " "), value])
+      );
+      document.querySelector("#deviceTable").innerHTML = table(
+        ["Device", "Apps", "Manual Review", "Fraud Rate", "Avg IP Risk"],
+        deviceRisk.map(item => [item.device, formatNum(item.applications), formatPct(item.manual_review_rate), formatPct(item.fraud_rate), item.avg_ip_risk_score])
+      );
       document.querySelector("#ruleTable").innerHTML = table(
         ["Rule", "Hits", "Fraud Capture", "FPR"],
         rules.map(item => [item.rule, formatNum(item.hits), formatPct(item.fraud_capture_rate), formatPct(item.false_positive_ratio)])
@@ -241,7 +288,25 @@
       );
     }
 
-    function renderAudit(summary, lookback) {
+    function renderMonitoring(monitoring) {
+      document.querySelector("#monitoringSummary").innerHTML = [
+        metric("Approved Accounts", formatNum(monitoring.approved_accounts)),
+        metric("Triggered Accounts", formatNum(monitoring.triggered_accounts)),
+        metric("Re-review Rate", formatPct(monitoring.re_review_rate)),
+      ].join("");
+      document.querySelector("#monitoringTable").innerHTML = table(
+        ["Trigger", "Accounts", "Re-review", "Avg Resolution", "Prior Flags"],
+        monitoring.triggers.map(item => [
+          item.trigger,
+          formatNum(item.accounts),
+          formatPct(item.re_review_rate),
+          `${item.avg_resolution_hours} hrs`,
+          formatNum(item.prior_onboarding_flags),
+        ])
+      );
+    }
+
+    function renderAudit(summary, lookback, monitoring) {
       const status = summary.missing_kyc_rate < 0.03 && summary.sop_deviation_rate < 0.05 ? "Ready for audit packet" : "Needs audit remediation";
       document.querySelector("#auditReadiness").innerHTML = `
         <p class="${status.startsWith("Ready") ? "good" : "warn"}">${status}</p>
@@ -249,6 +314,7 @@
           ["SOP override rate", formatPct(summary.sop_deviation_rate), "Human override discipline and QA sampling target"],
           ["Missing KYC attributes", formatPct(summary.missing_kyc_rate), "Completeness of partner-bank verification records"],
           ["Lookback impacted population", formatNum(lookback.impacted_accounts), "Accounts requiring evidence-backed remediation"],
+          ["Ongoing monitoring re-review", formatPct(monitoring.re_review_rate), "Post-approval lifecycle monitoring coverage"],
         ])}
       `;
     }
@@ -269,9 +335,11 @@
         renderFunnel(data.funnel);
         renderAlerts(data.drift_alerts);
         renderLookback(data.lookback);
+        renderSanctions(data.sanctions);
         renderVendors(data.vendor_weekly);
-        renderRules(data.rules, data.threshold_scenarios);
-        renderAudit(data.summary, data.lookback);
+        renderRules(data.rules, data.threshold_scenarios, data.active_policy, data.device_risk);
+        renderMonitoring(data.monitoring);
+        renderAudit(data.summary, data.lookback, data.monitoring);
       })
       .catch(error => {
         document.querySelector("main").innerHTML = `<div class="panel"><strong>Dashboard data failed to load.</strong><p>${error}</p></div>`;
