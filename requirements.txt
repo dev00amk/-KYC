@@ -1,0 +1,2 @@
+# The shipped scripts use only the Python standard library.
+# Optional: serve dashboard/ with `python -m http.server`.

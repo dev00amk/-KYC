@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KYC Risk Control Health</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --ink: #17202a;
+      --muted: #667085;
+      --panel: #ffffff;
+      --line: #d9dee7;
+      --green: #097969;
+      --blue: #2454a6;
+      --red: #b42318;
+      --yellow: #b54708;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      padding: 22px 28px;
+    }
+    h1 { margin: 0 0 6px; font-size: 28px; font-weight: 760; }
+    p { margin: 0; color: var(--muted); line-height: 1.45; }
+    main { padding: 22px 28px 40px; max-width: 1440px; margin: 0 auto; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .tab {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 9px 13px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    .tab.active { border-color: var(--blue); color: var(--blue); box-shadow: inset 0 0 0 1px var(--blue); }
+    .grid { display: grid; gap: 14px; }
+    .kpis { grid-template-columns: repeat(7, minmax(130px, 1fr)); }
+    .two { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      min-width: 0;
+    }
+    .metric-label { color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    .metric-value { font-size: 25px; font-weight: 780; margin-top: 6px; }
+    .section { display: none; }
+    .section.active { display: grid; gap: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    .bar-row { display: grid; grid-template-columns: 160px 1fr 70px; gap: 10px; align-items: center; margin: 10px 0; }
+    .track { height: 12px; background: #eef1f5; border-radius: 99px; overflow: hidden; }
+    .fill { height: 100%; background: var(--blue); border-radius: 99px; }
+    .alert { border-left: 4px solid var(--red); }
+    .good { color: var(--green); font-weight: 750; }
+    .warn { color: var(--yellow); font-weight: 750; }
+    .bad { color: var(--red); font-weight: 750; }
+    .note { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    @media (max-width: 980px) {
+      main, header { padding-left: 16px; padding-right: 16px; }
+      .kpis, .two { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 120px 1fr 58px; }
+      table { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>KYC Risk Control Health</h1>
+    <p>Portfolio dashboard for regulatory lookbacks, identity vendor drift, rule threshold tuning, and audit readiness.</p>
+  </header>
+  <main>
+    <nav class="tabs" aria-label="Dashboard tabs">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="lookback">Lookback</button>
+      <button class="tab" data-tab="vendors">Vendors</button>
+      <button class="tab" data-tab="rules">Rules</button>
+      <button class="tab" data-tab="audit">Audit</button>
+    </nav>
+
+    <section id="overview" class="section active">
+      <div id="kpis" class="grid kpis"></div>
+      <div class="grid two">
+        <div class="panel">
+          <h2>Funnel Diagnostics</h2>
+          <div id="funnel"></div>
+        </div>
+        <div class="panel">
+          <h2>Active Alerts</h2>
+          <div id="alerts"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lookback" class="section">
+      <div class="grid two">
+        <div class="panel">
+          <h2>Regulatory Lookback Exposure</h2>
+          <div id="lookbackSummary"></div>
+        </div>
+        <div class="panel">
+          <h2>Remediation Playbook</h2>
+          <div id="tiers"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="vendors" class="section">
+      <div class="panel">
+        <h2>Vendor SLA And Control Drift</h2>
+        <div id="vendorTable"></div>
+      </div>
+    </section>
+
+    <section id="rules" class="section">
+      <div class="grid two">
+        <div class="panel">
+          <h2>Rule Effectiveness</h2>
+          <div id="ruleTable"></div>
+        </div>
+        <div class="panel">
+          <h2>Threshold Simulation Playground</h2>
+          <div id="scenarioTable"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="audit" class="section">
+      <div class="panel">
+        <h2>Audit Readiness</h2>
+        <div id="auditReadiness"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const formatPct = value => `${(value * 100).toFixed(1)}%`;
+    const formatMoney = value => `$${Math.round(value).toLocaleString()}`;
+    const formatNum = value => Number(value).toLocaleString();
+
+    function table(headers, rows) {
+      return `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    }
+
+    function renderKpis(summary) {
+      const kpis = [
+        ["Applications", formatNum(summary.applications)],
+        ["Approval Rate", formatPct(summary.approval_rate)],
+        ["Manual Review", formatPct(summary.manual_review_rate)],
+        ["Fraud Rate", formatPct(summary.confirmed_fraud_rate)],
+        ["Avg Queue", `${summary.avg_queue_minutes} min`],
+        ["SOP Deviation", formatPct(summary.sop_deviation_rate)],
+        ["Missing KYC", formatPct(summary.missing_kyc_rate)],
+      ];
+      document.querySelector("#kpis").innerHTML = kpis.map(([label, value]) => `
+        <div class="panel">
+          <div class="metric-label">${label}</div>
+          <div class="metric-value">${value}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderFunnel(funnel) {
+      const max = Math.max(...funnel.map(item => item.applications));
+      document.querySelector("#funnel").innerHTML = funnel.map(item => `
+        <div class="bar-row">
+          <strong>${item.step.replaceAll("_", " ")}</strong>
+          <div class="track"><div class="fill" style="width:${(item.applications / max) * 100}%"></div></div>
+          <span>${formatPct(item.conversion_rate)}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderAlerts(alerts) {
+      const node = document.querySelector("#alerts");
+      if (!alerts.length) {
+        node.innerHTML = `<p class="good">No vendor drift alerts exceeded the 15% threshold.</p>`;
+        return;
+      }
+      node.innerHTML = alerts.slice(-6).reverse().map(alert => `
+        <div class="panel alert">
+          <strong>${alert.message}</strong>
+          <p>${alert.vendor} on ${alert.week_start}: match ${formatPct(alert.match_rate_change)}, latency ${formatPct(alert.latency_change)}</p>
+        </div>
+      `).join("");
+    }
+
+    function renderLookback(lookback) {
+      document.querySelector("#lookbackSummary").innerHTML = `
+        <div class="metric-label">Impacted Accounts</div>
+        <div class="metric-value">${formatNum(lookback.impacted_accounts)}</div>
+        <p class="note">Active balance exposure: ${formatMoney(lookback.active_balance_exposure)}. Chargeoff exposure: ${formatMoney(lookback.chargeoff_exposure)}.</p>
+      `;
+      const rows = Object.entries(lookback.tiers).map(([tier, item]) => [
+        tier.replaceAll("_", " "),
+        formatNum(item.accounts),
+        formatMoney(item.active_balance),
+        formatMoney(item.chargeoff),
+      ]);
+      document.querySelector("#tiers").innerHTML = table(["Tier", "Accounts", "Active Balance", "Chargeoff"], rows);
+    }
+
+    function renderVendors(series) {
+      const rows = series.slice(-16).reverse().map(item => [
+        item.week_start,
+        item.vendor,
+        formatNum(item.applications),
+        `${(item.match_rate * 100).toFixed(1)}%`,
+        `${Math.round(item.latency_ms)} ms`,
+        formatPct(item.false_positive_ratio),
+      ]);
+      document.querySelector("#vendorTable").innerHTML = table(["Week", "Vendor", "Apps", "Match Rate", "Latency", "FPR"], rows);
+    }
+
+    function renderRules(rules, scenarios) {
+      document.querySelector("#ruleTable").innerHTML = table(
+        ["Rule", "Hits", "Fraud Capture", "FPR"],
+        rules.map(item => [item.rule, formatNum(item.hits), formatPct(item.fraud_capture_rate), formatPct(item.false_positive_ratio)])
+      );
+      document.querySelector("#scenarioTable").innerHTML = table(
+        ["Name Tol.", "IP Risk", "Manual Reviews", "Savings", "Leakage"],
+        scenarios.slice(0, 8).map(item => [
+          item.name_match_threshold,
+          item.ip_risk_threshold,
+          formatNum(item.manual_review_count),
+          formatMoney(item.estimated_monthly_savings),
+          formatPct(item.fraud_leakage_rate),
+        ])
+      );
+    }
+
+    function renderAudit(summary, lookback) {
+      const status = summary.missing_kyc_rate < 0.03 && summary.sop_deviation_rate < 0.05 ? "Ready for audit packet" : "Needs audit remediation";
+      document.querySelector("#auditReadiness").innerHTML = `
+        <p class="${status.startsWith("Ready") ? "good" : "warn"}">${status}</p>
+        ${table(["Control", "Metric", "Interpretation"], [
+          ["SOP override rate", formatPct(summary.sop_deviation_rate), "Human override discipline and QA sampling target"],
+          ["Missing KYC attributes", formatPct(summary.missing_kyc_rate), "Completeness of partner-bank verification records"],
+          ["Lookback impacted population", formatNum(lookback.impacted_accounts), "Accounts requiring evidence-backed remediation"],
+        ])}
+      `;
+    }
+
+    document.querySelectorAll(".tab").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+        document.querySelectorAll(".section").forEach(section => section.classList.remove("active"));
+        button.classList.add("active");
+        document.querySelector(`#${button.dataset.tab}`).classList.add("active");
+      });
+    });
+
+    fetch("dashboard_data.json")
+      .then(response => response.json())
+      .then(data => {
+        renderKpis(data.summary);
+        renderFunnel(data.funnel);
+        renderAlerts(data.drift_alerts);
+        renderLookback(data.lookback);
+        renderVendors(data.vendor_weekly);
+        renderRules(data.rules, data.threshold_scenarios);
+        renderAudit(data.summary, data.lookback);
+      })
+      .catch(error => {
+        document.querySelector("main").innerHTML = `<div class="panel"><strong>Dashboard data failed to load.</strong><p>${error}</p></div>`;
+      });
+  </script>
+</body>
+</html>
