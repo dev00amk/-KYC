@@ -768,6 +768,8 @@
       "feature": "ip_risk_score",
       "psi": 0.0043,
       "status": "stable",
+      "alert_severity": "stable",
+      "recommended_action": "Keep current onboarding cutoffs active.",
       "bins": [
         {
           "bin_low": 0.0,
@@ -845,6 +847,8 @@
       "feature": "name_match_score",
       "psi": 0.004,
       "status": "stable",
+      "alert_severity": "stable",
+      "recommended_action": "Keep current onboarding cutoffs active.",
       "bins": [
         {
           "bin_low": 66.0,
@@ -922,6 +926,8 @@
       "feature": "phone_tenure_days",
       "psi": 0.0026,
       "status": "stable",
+      "alert_severity": "stable",
+      "recommended_action": "Keep current onboarding cutoffs active.",
       "bins": [
         {
           "bin_low": 0.0,
@@ -999,6 +1005,8 @@
       "feature": "vendor_latency_ms",
       "psi": 0.6475,
       "status": "major_shift_recalibrate",
+      "alert_severity": "critical",
+      "recommended_action": "Deploy secondary fallback vendor cascade and flag decisioning thresholds for immediate re-tuning.",
       "bins": [
         {
           "bin_low": 125.0,

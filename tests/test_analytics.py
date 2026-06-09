@@ -8,6 +8,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from generate_synthetic_data import generate_rows
 from risk_analytics import (
+    RiskEngine,
+    evaluate_population_stability,
     lookback_population,
     population_monitoring,
     threshold_simulation,
@@ -132,6 +134,25 @@ class AnalyticsTests(unittest.TestCase):
             key = (row["vendor"], row["week_start"])
             rates_by_vendor_week.setdefault(key, set()).add(row["vendor_match_rate"])
         self.assertTrue(all(len(rates) == 1 for rates in rates_by_vendor_week.values()))
+
+    def test_toxic_rule_isolation(self):
+        engine = RiskEngine()
+        sample_metrics = {
+            "rule_id": "R_099_WEB_SESSION_VELOCITY",
+            "false_positive_rate_pct": 89.5,
+            "queue_burden_hours": 120,
+            "avg_api_latency_ms": 640,
+        }
+        optimization_candidates = engine.identify_optimization_targets([sample_metrics])
+        self.assertIn("R_099_WEB_SESSION_VELOCITY", optimization_candidates)
+
+    def test_population_stability_critical_alert(self):
+        alert = evaluate_population_stability(
+            current_distribution=[0.02, 0.03, 0.95],
+            baseline_distribution=[0.33, 0.33, 0.34],
+        )
+        self.assertEqual(alert["severity"], "critical")
+        self.assertIn("fallback vendor", alert["action"])
 
 
 if __name__ == "__main__":

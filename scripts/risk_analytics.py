@@ -20,6 +20,11 @@ TIER_COMPLETION = {
     "tier_3_reverify": 0.89,
 }
 
+PSI_WARNING_THRESHOLD = 0.10
+PSI_CRITICAL_THRESHOLD = 0.25
+TOXIC_RULE_FPR_THRESHOLD_PCT = 85.0
+TOXIC_RULE_QUEUE_THRESHOLD_HOURS = 100.0
+
 
 def load_rows(path):
     with Path(path).open(newline="", encoding="utf-8") as handle:
@@ -76,6 +81,74 @@ def percentile(values, pct):
     values = sorted(values)
     index = min(len(values) - 1, int(round((pct / 100) * (len(values) - 1))))
     return values[index]
+
+
+def calculate_psi(current_distribution, baseline_distribution):
+    if len(current_distribution) != len(baseline_distribution):
+        raise ValueError("Current and baseline distributions must have the same number of buckets.")
+
+    psi = 0.0
+    for current_pct, baseline_pct in zip(current_distribution, baseline_distribution):
+        current = max(float(current_pct), 1e-6)
+        baseline = max(float(baseline_pct), 1e-6)
+        psi += (current - baseline) * log(current / baseline)
+    return round(psi, 4)
+
+
+def evaluate_population_stability(current_distribution, baseline_distribution):
+    psi_value = calculate_psi(current_distribution, baseline_distribution)
+    return psi_alert_from_value(psi_value)
+
+
+def psi_alert_from_value(psi_value):
+    if psi_value > PSI_CRITICAL_THRESHOLD:
+        return {
+            "psi": psi_value,
+            "severity": "critical",
+            "message": "PSI exceeds recalibration threshold.",
+            "action": (
+                "Deploy secondary fallback vendor cascade and flag decisioning "
+                "thresholds for immediate re-tuning."
+            ),
+        }
+    if psi_value >= PSI_WARNING_THRESHOLD:
+        return {
+            "psi": psi_value,
+            "severity": "warning",
+            "message": "Moderate distribution drift detected.",
+            "action": "Queue automated threshold optimization simulation.",
+        }
+    return {
+        "psi": psi_value,
+        "severity": "stable",
+        "message": "Risk distributions stable.",
+        "action": "Keep current onboarding cutoffs active.",
+    }
+
+
+class RiskEngine:
+    def __init__(
+        self,
+        fpr_threshold_pct=TOXIC_RULE_FPR_THRESHOLD_PCT,
+        queue_threshold_hours=TOXIC_RULE_QUEUE_THRESHOLD_HOURS,
+        latency_threshold_ms=900,
+    ):
+        self.fpr_threshold_pct = fpr_threshold_pct
+        self.queue_threshold_hours = queue_threshold_hours
+        self.latency_threshold_ms = latency_threshold_ms
+
+    def identify_optimization_targets(self, rule_metrics):
+        candidates = []
+        for metric in rule_metrics:
+            high_noise = metric.get("false_positive_rate_pct", 0) > self.fpr_threshold_pct
+            high_queue = metric.get("queue_burden_hours", 0) > self.queue_threshold_hours
+            latency_breach = metric.get("avg_api_latency_ms", 0) > self.latency_threshold_ms
+            if high_noise and (high_queue or latency_breach):
+                candidates.append(metric["rule_id"])
+        return candidates
+
+    def evaluate_population_stability(self, current_distribution, baseline_distribution):
+        return evaluate_population_stability(current_distribution, baseline_distribution)
 
 
 def lookback_population(rows):
@@ -393,8 +466,17 @@ def population_stability_index(rows, feature, n_bins=10):
             "bucket_psi": round(bucket_psi, 4),
         })
 
+    psi = round(psi, 4)
+    alert = psi_alert_from_value(psi)
     status = "stable" if psi < 0.10 else ("moderate_shift" if psi < 0.25 else "major_shift_recalibrate")
-    return {"feature": feature, "psi": round(psi, 4), "status": status, "bins": bins}
+    return {
+        "feature": feature,
+        "psi": psi,
+        "status": status,
+        "alert_severity": alert["severity"],
+        "recommended_action": alert["action"],
+        "bins": bins,
+    }
 
 
 def population_monitoring(rows):

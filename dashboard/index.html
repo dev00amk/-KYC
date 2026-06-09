@@ -281,11 +281,12 @@
 
     function renderPsi(populationStability) {
       document.querySelector("#psiTable").innerHTML = table(
-        ["Feature", "PSI", "Status"],
+        ["Feature", "PSI", "Severity", "Action"],
         populationStability.map(item => [
           item.feature,
           item.psi === null ? "n/a" : item.psi,
-          item.status.replaceAll("_", " "),
+          item.alert_severity,
+          item.recommended_action,
         ])
       );
     }
