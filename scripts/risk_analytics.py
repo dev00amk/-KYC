@@ -249,6 +249,9 @@ class IdentityVendorCircuitBreaker:
 
     def allow_request(self):
         if self.state == "OPEN":
+            if time.monotonic() - self.last_state_change >= self.recovery_timeout:
+                self._transition("HALF_OPEN")
+                return True
             return False
         return True
 

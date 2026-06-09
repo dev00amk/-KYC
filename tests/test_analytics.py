@@ -247,7 +247,7 @@ class AnalyticsTests(unittest.TestCase):
         self.assertEqual(result, 0.0)
 
     def test_identity_vendor_circuit_breaker_opens_and_recovers(self):
-        breaker = IdentityVendorCircuitBreaker(failure_threshold=2, recovery_timeout_seconds=0)
+        breaker = IdentityVendorCircuitBreaker(failure_threshold=2, recovery_timeout_seconds=60)
 
         self.assertTrue(breaker.allow_request())
         breaker.record_execution(success=False, latency_ms=100)
@@ -257,9 +257,20 @@ class AnalyticsTests(unittest.TestCase):
         self.assertEqual(breaker.state, "OPEN")
         self.assertFalse(breaker.allow_request())
 
+        breaker.last_state_change -= 60
+        self.assertTrue(breaker.allow_request())
         breaker.record_execution(success=True, latency_ms=100)
         self.assertEqual(breaker.state, "CLOSED")
         self.assertTrue(breaker.allow_request())
+
+    def test_identity_vendor_circuit_breaker_allows_recovery_probe(self):
+        breaker = IdentityVendorCircuitBreaker(failure_threshold=1, recovery_timeout_seconds=0)
+
+        breaker.record_execution(success=False, latency_ms=100)
+
+        self.assertEqual(breaker.state, "OPEN")
+        self.assertTrue(breaker.allow_request())
+        self.assertEqual(breaker.state, "HALF_OPEN")
 
 
 if __name__ == "__main__":
