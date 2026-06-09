@@ -11,6 +11,7 @@ The project uses synthetic data only. The scenario, metrics, remediation tiers, 
 - Vendor governance: champion/challenger monitoring for identity vendors, including match-rate drift, latency, false positive ratio, and vendor false negative rate.
 - Audit readiness: remediation tiers, management response artifacts, policy logs, documented assumptions, and exam-ready control inventory.
 - Programmatic guardrails: `RiskEngine` isolates high-friction rules and PSI alerting recommends vendor cascade or threshold recalibration when feature drift breaches tolerance.
+- Advanced routing: `AdvancedRiskEngine` assigns degraded vendor paths to a challenger cascade when SLA latency or score quality breaches tolerance.
 
 Device channel risk profiling reflects the mobile-first onboarding environment of digital banking platforms. The synthetic model treats iOS and Android traffic as more predictable than web sessions and surfaces device-level manual review and fraud rates.
 
@@ -56,7 +57,7 @@ POLICY_LOG.md                   Threshold change-management trail
 From this folder:
 
 ```powershell
-python scripts/generate_synthetic_data.py --rows 8000
+python scripts/generate_synthetic_data.py --rows 10000
 python scripts/risk_analytics.py
 python -m unittest discover -s tests
 python -m http.server 8080 --directory dashboard
@@ -82,7 +83,8 @@ Then walk through the artifacts:
 6. Monitoring: post-approval trigger rates and whether onboarding flags predicted lifecycle risk.
 7. Population Stability: PSI checks showing whether feature distributions have shifted enough to invalidate thresholds.
 8. Operational Guardrails: `RiskEngine.identify_optimization_targets()` flags rules that combine high false positives with queue burden or vendor latency breaches.
-9. Audit Artifacts: decision memo, policy log, assumptions, and exam readiness report.
+9. Champion/Challenger Routing: `AdvancedRiskEngine.execute_vendor_cascade_routing()` moves degraded vendor paths into fallback routing.
+10. Audit Artifacts: decision memo, policy log, assumptions, and exam readiness report.
 
 ## Decision Example
 

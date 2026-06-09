@@ -1,19 +1,34 @@
-# Exam Readiness Report
+# Regulatory Examination and Control Self-Assessment
 
-## 1. Control Inventory
+**Framework Version:** 2026.1.4  
+**Regulatory Standards Alignment:** FFIEC BSA/AML Manual, FinCEN CIP Rule, Federal Reserve SR 11-7 Model Risk Management  
+**Primary Audience:** Financial Crimes, Identity Risk, sponsor-bank compliance, vendor governance, and internal audit
 
-| Control | Threshold | Last Calibration Date | Owner |
+## 1. Control Effectiveness Summary
+
+This framework operates on an active identity-control model. Entry-point onboarding risks are detected, reason-coded, routed, and measured before application outcomes are treated as final. The system is designed to protect legitimate member conversion while preserving evidence trails for sanctions, CIP, vendor-risk, and model-risk review.
+
+## 2. Institutional Control Matrix
+
+| Control ID | Risk Vector | Programmatic Detection Mechanism | Fail-Safe Default Protocol |
 | --- | --- | --- | --- |
-| Sanctions screening | Any sanctions hit routes to Tier 1 review | 2026-04-01 | AML Compliance |
-| Name-match tolerance | Manual review below 83 | 2026-04-01 | Identity Risk Strategy |
-| IP-risk threshold | Manual review above 80 | 2026-04-01 | Fraud Decisioning |
-| Phone tenure | Manual review below 30 days | 2026-03-15 | Identity Risk Strategy |
-| Device fingerprint mismatch | Manual review when mismatch is present | 2026-04-01 | Fraud Engineering |
-| Vendor drift monitor | Alert at 15% match-rate drop or latency spike | 2026-03-22 | Vendor Governance |
-| Population stability monitor | PSI above 0.10 requires investigation; above 0.25 requires recalibration review | 2026-04-01 | Model Risk |
-| Decision reason-code audit trail | Every decision stores `review_reason_codes`, including `CLEAN` approvals | 2026-04-01 | Fraud Decisioning |
+| CTRL-KYC-001 | Synthetic identity fraud | SSN velocity profiling, document mismatch, device fingerprint mismatch, and name-match thresholds | Route to secondary out-of-band documentary review |
+| CTRL-SAN-002 | Sanctions screening | `sanctions_hit` reason code and Tier 1 remediation classification | Soft-lock account ledger and trigger SAR review workflow |
+| CTRL-DRF-003 | Vendor or model drift | Population Stability Index tracking and vendor-week match-rate monitoring | Notify Risk Strategy and initialize challenger cascade review |
+| CTRL-OPS-004 | Manual-review fatigue | Rule precision, false-positive rate, API latency, and queue-burden scoring | Degrade, retune, or move noisy controls to step-up verification |
+| CTRL-AUD-005 | Evidence completeness | Reason-code audit trail and attribute-level KYC completeness checks | Block audit packet closure until required evidence fields are complete |
 
-## 2. Population Under Review
+## 3. Model Risk Management and Drift Thresholds
+
+Identity vendor scores and decisioning signals are treated as model-risk inputs. Distribution movement is monitored using PSI:
+
+- `PSI < 0.10`: Stable. Current onboarding thresholds remain valid.
+- `0.10 <= PSI <= 0.25`: Moderate shift. Risk Strategy should review vendor inputs and threshold calibration.
+- `PSI > 0.25`: Structural shift. Trigger immediate recalibration review and challenger routing assessment.
+
+Evaluation cadence: rolling 168-hour review in production, represented in this repository by baseline/current cohort comparison.
+
+## 4. Population Under Review
 
 The Q1 2026 lookback population includes accounts instant-approved despite commercial P.O. Box or sanctions screening exceptions. The dashboard extract quantifies impacted accounts, active balance exposure, and chargeoff exposure.
 
@@ -23,15 +38,15 @@ Primary population filters:
 - `commercial_po_box = 1 OR sanctions_hit = 1`
 - Application date within the simulated release defect window of 2026-01-15 through 2026-03-20
 
-## 3. Remediation Status
+## 5. Remediation Status
 
 | Tier | Action | Simulated Completion Rate | Evidence |
 | --- | --- | ---: | --- |
-| Tier 1 | SAR review and account block | 62% | Case export, sanctions-screening payload, disposition notes |
-| Tier 2 | Freeze and step-up document request | 73% | Member outreach log, utility bill or address verification |
-| Tier 3 | Low-friction database reverification | 84% | Background reverification result and audit evidence row |
+| Tier 1 | SAR review and account block | 61% | Case export, sanctions-screening payload, disposition notes |
+| Tier 2 | Freeze and step-up document request | 74% | Member outreach log, utility bill or address verification |
+| Tier 3 | Low-friction database reverification | 89% | Background reverification result and audit evidence row |
 
-## 4. Outstanding Items
+## 6. Outstanding Items
 
 | Item | Owner | Target Date | Status |
 | --- | --- | --- | --- |

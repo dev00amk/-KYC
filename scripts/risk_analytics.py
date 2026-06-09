@@ -1,10 +1,13 @@
 import argparse
 import csv
 import json
+import logging
 from collections import defaultdict
 from math import log
 from pathlib import Path
 
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(levelname)s] - %(message)s")
 
 ACTIVE_POLICY = {
     "name_match_threshold": 83,
@@ -149,6 +152,89 @@ class RiskEngine:
 
     def evaluate_population_stability(self, current_distribution, baseline_distribution):
         return evaluate_population_stability(current_distribution, baseline_distribution)
+
+
+class AdvancedRiskEngine(RiskEngine):
+    """
+    Institutional-grade identity control engine.
+
+    Executes automated vendor cascade routing, toxic-rule isolation, and PSI-based
+    population stability enforcement without requiring a specific dataframe library.
+    """
+
+    def __init__(
+        self,
+        false_positive_tolerance=TOXIC_RULE_FPR_THRESHOLD_PCT,
+        max_queue_burden_hours=TOXIC_RULE_QUEUE_THRESHOLD_HOURS,
+        latency_threshold_ms=450,
+        min_vendor_score=0.15,
+    ):
+        super().__init__(
+            fpr_threshold_pct=false_positive_tolerance,
+            queue_threshold_hours=max_queue_burden_hours,
+            latency_threshold_ms=latency_threshold_ms,
+        )
+        self.fpr_tolerance = false_positive_tolerance
+        self.max_burden = max_queue_burden_hours
+        self.min_vendor_score = min_vendor_score
+
+    def execute_vendor_cascade_routing(self, applications):
+        """
+        Route applications to a challenger cascade when primary vendor SLA or score quality degrades.
+
+        Accepts either a list of dictionaries or a pandas-like DataFrame. This keeps CI lightweight
+        while still allowing vectorized use in analyst notebooks.
+        """
+        logging.info("Initializing Champion/Challenger Identity Cascade Diagnostics.")
+        if hasattr(applications, "copy") and hasattr(applications, "__setitem__") and "vendor_latency_ms" in applications:
+            processed = applications.copy()
+            degraded_mask = (
+                (processed["vendor_latency_ms"] > self.latency_threshold_ms)
+                | (processed["kyc_vendor_score"] < self.min_vendor_score)
+            )
+            processed["assigned_routing_tier"] = degraded_mask.map(
+                {
+                    True: "CHALLENGER_SECONDARY_CASCADE",
+                    False: "CHAMPION_PRIMARY_PATH",
+                }
+            )
+            cascade_count = int(degraded_mask.sum())
+        else:
+            processed = []
+            cascade_count = 0
+            for application in applications:
+                routed = dict(application)
+                degraded = (
+                    routed.get("vendor_latency_ms", 0) > self.latency_threshold_ms
+                    or routed.get("kyc_vendor_score", 1.0) < self.min_vendor_score
+                )
+                routed["assigned_routing_tier"] = (
+                    "CHALLENGER_SECONDARY_CASCADE" if degraded else "CHAMPION_PRIMARY_PATH"
+                )
+                cascade_count += int(degraded)
+                processed.append(routed)
+
+        if cascade_count:
+            logging.warning(
+                "[SLA BREACH] Automatically rerouted %s applications to fallback pipeline.",
+                cascade_count,
+            )
+        return processed
+
+    def identify_optimization_targets(self, rule_metrics):
+        toxic_rules = []
+        for rule in rule_metrics:
+            high_noise = rule.get("false_positive_rate_pct", 0) >= self.fpr_tolerance
+            high_burden = rule.get("queue_burden_hours", 0) >= self.max_burden
+            if high_noise and high_burden:
+                toxic_rules.append(rule["rule_id"])
+                logging.error(
+                    "[GOVERNANCE VOID] Toxic control isolated: %s | FPR: %s%% | Queue burden: %s hrs.",
+                    rule["rule_id"],
+                    rule.get("false_positive_rate_pct"),
+                    rule.get("queue_burden_hours"),
+                )
+        return toxic_rules
 
 
 def lookback_population(rows):

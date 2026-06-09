@@ -8,6 +8,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from generate_synthetic_data import generate_rows
 from risk_analytics import (
+    AdvancedRiskEngine,
     RiskEngine,
     evaluate_population_stability,
     lookback_population,
@@ -153,6 +154,41 @@ class AnalyticsTests(unittest.TestCase):
         )
         self.assertEqual(alert["severity"], "critical")
         self.assertIn("fallback vendor", alert["action"])
+
+    def test_advanced_engine_stochastic_toxic_rule_isolation(self):
+        engine = AdvancedRiskEngine(false_positive_tolerance=85.0, max_queue_burden_hours=100.0)
+        mock_pipeline_rules = [
+            {
+                "rule_id": "R_099_WEB_VELOCITY_HIGH_FRICTION",
+                "false_positive_rate_pct": 92.4,
+                "queue_burden_hours": 145.0,
+            },
+            {
+                "rule_id": "R_001_SSN_DETERMINISTIC_MATCH",
+                "false_positive_rate_pct": 1.2,
+                "queue_burden_hours": 12.0,
+            },
+        ]
+
+        targets = engine.identify_optimization_targets(mock_pipeline_rules)
+
+        self.assertIn("R_099_WEB_VELOCITY_HIGH_FRICTION", targets)
+        self.assertNotIn("R_001_SSN_DETERMINISTIC_MATCH", targets)
+
+    def test_advanced_engine_vendor_cascade_logic(self):
+        engine = AdvancedRiskEngine()
+        mock_data = [
+            {"user_id": "U001", "vendor_latency_ms": 600, "kyc_vendor_score": 0.80},
+            {"user_id": "U002", "vendor_latency_ms": 120, "kyc_vendor_score": 0.95},
+            {"user_id": "U003", "vendor_latency_ms": 200, "kyc_vendor_score": 0.10},
+        ]
+
+        processed = engine.execute_vendor_cascade_routing(mock_data)
+        routing = {row["user_id"]: row["assigned_routing_tier"] for row in processed}
+
+        self.assertEqual(routing["U001"], "CHALLENGER_SECONDARY_CASCADE")
+        self.assertEqual(routing["U002"], "CHAMPION_PRIMARY_PATH")
+        self.assertEqual(routing["U003"], "CHALLENGER_SECONDARY_CASCADE")
 
 
 if __name__ == "__main__":

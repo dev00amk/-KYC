@@ -1,33 +1,33 @@
 {
   "summary": {
-    "applications": 8000,
-    "approval_rate": 0.904,
-    "manual_review_rate": 0.1943,
-    "confirmed_fraud_rate": 0.0248,
-    "avg_queue_minutes": 338.78,
-    "sop_deviation_rate": 0.0171,
-    "missing_kyc_rate": 0.2067
+    "applications": 10000,
+    "approval_rate": 0.9029,
+    "manual_review_rate": 0.1968,
+    "confirmed_fraud_rate": 0.0246,
+    "avg_queue_minutes": 338.36,
+    "sop_deviation_rate": 0.0163,
+    "missing_kyc_rate": 0.2119
   },
   "lookback": {
-    "impacted_accounts": 228,
-    "active_balance_exposure": 374654.32,
-    "chargeoff_exposure": 26339.95,
+    "impacted_accounts": 295,
+    "active_balance_exposure": 493499.59,
+    "chargeoff_exposure": 35641.0,
     "tiers": {
       "tier_1_sar_review": {
-        "accounts": 118,
-        "active_balance": 198640.2,
-        "chargeoff": 26339.95,
+        "accounts": 149,
+        "active_balance": 253350.17,
+        "chargeoff": 35641.0,
         "completion_rate": 0.61
       },
       "tier_2_step_up": {
-        "accounts": 98,
-        "active_balance": 174616.94,
+        "accounts": 133,
+        "active_balance": 238641.91,
         "chargeoff": 0.0,
         "completion_rate": 0.74
       },
       "tier_3_reverify": {
-        "accounts": 12,
-        "active_balance": 1397.18,
+        "accounts": 13,
+        "active_balance": 1507.51,
         "chargeoff": 0.0,
         "completion_rate": 0.89
       }
@@ -37,326 +37,326 @@
     {
       "week_start": "2025-12-29",
       "vendor": "baseline_id",
-      "applications": 150,
+      "applications": 188,
       "match_rate": 0.92,
-      "latency_ms": 603.74,
-      "false_positive_ratio": 0.2653,
-      "vendor_false_negative_rate": 0.6667
+      "latency_ms": 606.11,
+      "false_positive_ratio": 0.288,
+      "vendor_false_negative_rate": 0.5
     },
     {
       "week_start": "2025-12-29",
       "vendor": "challenger_id",
-      "applications": 135,
+      "applications": 169,
       "match_rate": 0.93,
-      "latency_ms": 528.75,
-      "false_positive_ratio": 0.1769,
+      "latency_ms": 534.43,
+      "false_positive_ratio": 0.1829,
       "vendor_false_negative_rate": 0.4
     },
     {
       "week_start": "2026-01-05",
       "vendor": "baseline_id",
-      "applications": 251,
+      "applications": 328,
       "match_rate": 0.9,
-      "latency_ms": 602.4,
-      "false_positive_ratio": 0.25,
-      "vendor_false_negative_rate": 0.1429
+      "latency_ms": 604.47,
+      "false_positive_ratio": 0.2437,
+      "vendor_false_negative_rate": 0.125
     },
     {
       "week_start": "2026-01-05",
       "vendor": "challenger_id",
-      "applications": 244,
+      "applications": 310,
       "match_rate": 0.95,
-      "latency_ms": 546.84,
-      "false_positive_ratio": 0.166,
+      "latency_ms": 539.63,
+      "false_positive_ratio": 0.1661,
       "vendor_false_negative_rate": 0.3333
     },
     {
       "week_start": "2026-01-12",
       "vendor": "baseline_id",
-      "applications": 248,
+      "applications": 314,
       "match_rate": 0.91,
-      "latency_ms": 612.7,
-      "false_positive_ratio": 0.313,
-      "vendor_false_negative_rate": 0.5
+      "latency_ms": 611.69,
+      "false_positive_ratio": 0.3161,
+      "vendor_false_negative_rate": 0.25
     },
     {
       "week_start": "2026-01-12",
       "vendor": "challenger_id",
-      "applications": 215,
+      "applications": 279,
       "match_rate": 0.94,
-      "latency_ms": 553.09,
-      "false_positive_ratio": 0.1196,
-      "vendor_false_negative_rate": 0.1667
+      "latency_ms": 545.53,
+      "false_positive_ratio": 0.1259,
+      "vendor_false_negative_rate": 0.2222
     },
     {
       "week_start": "2026-01-19",
       "vendor": "baseline_id",
-      "applications": 262,
+      "applications": 316,
       "match_rate": 0.89,
-      "latency_ms": 597.85,
-      "false_positive_ratio": 0.2857,
-      "vendor_false_negative_rate": 0.3333
+      "latency_ms": 602.6,
+      "false_positive_ratio": 0.2862,
+      "vendor_false_negative_rate": 0.2
     },
     {
       "week_start": "2026-01-19",
       "vendor": "challenger_id",
-      "applications": 228,
+      "applications": 295,
       "match_rate": 0.95,
-      "latency_ms": 527.39,
-      "false_positive_ratio": 0.1339,
+      "latency_ms": 527.21,
+      "false_positive_ratio": 0.1375,
       "vendor_false_negative_rate": 0.25
     },
     {
       "week_start": "2026-01-26",
       "vendor": "baseline_id",
-      "applications": 226,
+      "applications": 279,
       "match_rate": 0.95,
-      "latency_ms": 626.56,
-      "false_positive_ratio": 0.2818,
-      "vendor_false_negative_rate": 0.3333
+      "latency_ms": 625.72,
+      "false_positive_ratio": 0.2684,
+      "vendor_false_negative_rate": 0.2857
     },
     {
       "week_start": "2026-01-26",
       "vendor": "challenger_id",
-      "applications": 240,
+      "applications": 297,
       "match_rate": 0.95,
-      "latency_ms": 535.93,
-      "false_positive_ratio": 0.1459,
-      "vendor_false_negative_rate": 0.1429
+      "latency_ms": 538.22,
+      "false_positive_ratio": 0.1399,
+      "vendor_false_negative_rate": 0.0909
     },
     {
       "week_start": "2026-02-02",
       "vendor": "baseline_id",
-      "applications": 243,
+      "applications": 294,
       "match_rate": 0.94,
-      "latency_ms": 606.5,
-      "false_positive_ratio": 0.2553,
-      "vendor_false_negative_rate": 0.125
+      "latency_ms": 609.85,
+      "false_positive_ratio": 0.2817,
+      "vendor_false_negative_rate": 0.2
     },
     {
       "week_start": "2026-02-02",
       "vendor": "challenger_id",
-      "applications": 209,
+      "applications": 276,
       "match_rate": 0.91,
-      "latency_ms": 520.69,
-      "false_positive_ratio": 0.1478,
-      "vendor_false_negative_rate": 0.5
+      "latency_ms": 520.59,
+      "false_positive_ratio": 0.1413,
+      "vendor_false_negative_rate": 0.5714
     },
     {
       "week_start": "2026-02-09",
       "vendor": "baseline_id",
-      "applications": 225,
+      "applications": 292,
       "match_rate": 0.92,
-      "latency_ms": 605.6,
-      "false_positive_ratio": 0.2968,
+      "latency_ms": 607.37,
+      "false_positive_ratio": 0.2837,
+      "vendor_false_negative_rate": 0.2
+    },
+    {
+      "week_start": "2026-02-09",
+      "vendor": "challenger_id",
+      "applications": 303,
+      "match_rate": 0.93,
+      "latency_ms": 537.18,
+      "false_positive_ratio": 0.1953,
       "vendor_false_negative_rate": 0.3333
     },
     {
-      "week_start": "2026-02-09",
-      "vendor": "challenger_id",
-      "applications": 229,
-      "match_rate": 0.93,
-      "latency_ms": 535.98,
-      "false_positive_ratio": 0.1806,
-      "vendor_false_negative_rate": 0.0
-    },
-    {
       "week_start": "2026-02-16",
       "vendor": "baseline_id",
-      "applications": 240,
+      "applications": 306,
       "match_rate": 0.94,
-      "latency_ms": 609.3,
-      "false_positive_ratio": 0.2638,
-      "vendor_false_negative_rate": 0.4
+      "latency_ms": 613.29,
+      "false_positive_ratio": 0.2776,
+      "vendor_false_negative_rate": 0.4286
     },
     {
       "week_start": "2026-02-16",
       "vendor": "challenger_id",
-      "applications": 218,
+      "applications": 291,
       "match_rate": 0.93,
-      "latency_ms": 542.82,
-      "false_positive_ratio": 0.1483,
+      "latency_ms": 538.52,
+      "false_positive_ratio": 0.1525,
       "vendor_false_negative_rate": 0.1111
     },
     {
       "week_start": "2026-02-23",
       "vendor": "baseline_id",
-      "applications": 239,
+      "applications": 291,
       "match_rate": 0.93,
-      "latency_ms": 616.23,
-      "false_positive_ratio": 0.3093,
-      "vendor_false_negative_rate": 0.3333
+      "latency_ms": 614.77,
+      "false_positive_ratio": 0.2927,
+      "vendor_false_negative_rate": 0.25
     },
     {
       "week_start": "2026-02-23",
       "vendor": "challenger_id",
-      "applications": 245,
+      "applications": 301,
       "match_rate": 0.95,
-      "latency_ms": 540.93,
-      "false_positive_ratio": 0.1494,
-      "vendor_false_negative_rate": 0.25
+      "latency_ms": 539.17,
+      "false_positive_ratio": 0.1723,
+      "vendor_false_negative_rate": 0.2
     },
     {
       "week_start": "2026-03-02",
       "vendor": "baseline_id",
-      "applications": 234,
+      "applications": 292,
       "match_rate": 0.91,
-      "latency_ms": 605.7,
-      "false_positive_ratio": 0.2159,
-      "vendor_false_negative_rate": 0.5714
+      "latency_ms": 610.01,
+      "false_positive_ratio": 0.2324,
+      "vendor_false_negative_rate": 0.5
     },
     {
       "week_start": "2026-03-02",
       "vendor": "challenger_id",
-      "applications": 215,
+      "applications": 258,
       "match_rate": 0.95,
-      "latency_ms": 535.71,
-      "false_positive_ratio": 0.177,
-      "vendor_false_negative_rate": 0.3333
+      "latency_ms": 537.76,
+      "false_positive_ratio": 0.1713,
+      "vendor_false_negative_rate": 0.2857
     },
     {
       "week_start": "2026-03-09",
       "vendor": "baseline_id",
-      "applications": 253,
+      "applications": 296,
       "match_rate": 0.93,
-      "latency_ms": 614.33,
-      "false_positive_ratio": 0.2227,
-      "vendor_false_negative_rate": 0.0
+      "latency_ms": 614.98,
+      "false_positive_ratio": 0.2465,
+      "vendor_false_negative_rate": 0.125
     },
     {
       "week_start": "2026-03-09",
       "vendor": "challenger_id",
-      "applications": 251,
+      "applications": 302,
       "match_rate": 0.97,
-      "latency_ms": 538.57,
-      "false_positive_ratio": 0.1306,
+      "latency_ms": 539.64,
+      "false_positive_ratio": 0.1486,
       "vendor_false_negative_rate": 0.1667
     },
     {
       "week_start": "2026-03-16",
       "vendor": "baseline_id",
-      "applications": 209,
+      "applications": 265,
       "match_rate": 0.79,
-      "latency_ms": 836.34,
-      "false_positive_ratio": 0.2673,
-      "vendor_false_negative_rate": 0.2857
+      "latency_ms": 838.88,
+      "false_positive_ratio": 0.2685,
+      "vendor_false_negative_rate": 0.25
     },
     {
       "week_start": "2026-03-16",
       "vendor": "challenger_id",
-      "applications": 224,
+      "applications": 292,
       "match_rate": 0.92,
-      "latency_ms": 531.24,
-      "false_positive_ratio": 0.0787,
-      "vendor_false_negative_rate": 0.125
+      "latency_ms": 523.19,
+      "false_positive_ratio": 0.0954,
+      "vendor_false_negative_rate": 0.2222
     },
     {
       "week_start": "2026-03-23",
       "vendor": "baseline_id",
-      "applications": 224,
+      "applications": 277,
       "match_rate": 0.76,
-      "latency_ms": 836.21,
-      "false_positive_ratio": 0.274,
+      "latency_ms": 842.92,
+      "false_positive_ratio": 0.2647,
       "vendor_false_negative_rate": 0.0
     },
     {
       "week_start": "2026-03-23",
       "vendor": "challenger_id",
-      "applications": 230,
+      "applications": 290,
       "match_rate": 0.95,
-      "latency_ms": 535.09,
-      "false_positive_ratio": 0.1182,
-      "vendor_false_negative_rate": 0.3
+      "latency_ms": 538.52,
+      "false_positive_ratio": 0.1183,
+      "vendor_false_negative_rate": 0.3636
     },
     {
       "week_start": "2026-03-30",
       "vendor": "baseline_id",
-      "applications": 240,
+      "applications": 302,
       "match_rate": 0.77,
-      "latency_ms": 841.2,
-      "false_positive_ratio": 0.2876,
+      "latency_ms": 837.96,
+      "false_positive_ratio": 0.3017,
       "vendor_false_negative_rate": 0.1429
     },
     {
       "week_start": "2026-03-30",
       "vendor": "challenger_id",
-      "applications": 237,
+      "applications": 285,
       "match_rate": 0.97,
-      "latency_ms": 539.57,
-      "false_positive_ratio": 0.1498,
-      "vendor_false_negative_rate": 0.0
+      "latency_ms": 540.73,
+      "false_positive_ratio": 0.1507,
+      "vendor_false_negative_rate": 0.0769
     },
     {
       "week_start": "2026-04-06",
       "vendor": "baseline_id",
-      "applications": 245,
+      "applications": 304,
       "match_rate": 0.78,
-      "latency_ms": 824.37,
-      "false_positive_ratio": 0.2551,
-      "vendor_false_negative_rate": 0.0
+      "latency_ms": 830.36,
+      "false_positive_ratio": 0.25,
+      "vendor_false_negative_rate": 0.25
     },
     {
       "week_start": "2026-04-06",
       "vendor": "challenger_id",
-      "applications": 251,
+      "applications": 306,
       "match_rate": 0.93,
-      "latency_ms": 541.15,
-      "false_positive_ratio": 0.1811,
-      "vendor_false_negative_rate": 0.0
+      "latency_ms": 535.85,
+      "false_positive_ratio": 0.1655,
+      "vendor_false_negative_rate": 0.1
     },
     {
       "week_start": "2026-04-13",
       "vendor": "baseline_id",
-      "applications": 217,
+      "applications": 278,
       "match_rate": 0.77,
-      "latency_ms": 860.63,
-      "false_positive_ratio": 0.3116,
+      "latency_ms": 858.41,
+      "false_positive_ratio": 0.3164,
       "vendor_false_negative_rate": 0.0
     },
     {
       "week_start": "2026-04-13",
       "vendor": "challenger_id",
-      "applications": 216,
+      "applications": 280,
       "match_rate": 0.95,
-      "latency_ms": 547.48,
-      "false_positive_ratio": 0.1374,
-      "vendor_false_negative_rate": 0.2
+      "latency_ms": 544.47,
+      "false_positive_ratio": 0.1496,
+      "vendor_false_negative_rate": 0.1667
     },
     {
       "week_start": "2026-04-20",
       "vendor": "baseline_id",
-      "applications": 220,
+      "applications": 268,
       "match_rate": 0.78,
-      "latency_ms": 826.64,
-      "false_positive_ratio": 0.2304,
+      "latency_ms": 828.12,
+      "false_positive_ratio": 0.2415,
       "vendor_false_negative_rate": 0.3333
     },
     {
       "week_start": "2026-04-20",
       "vendor": "challenger_id",
-      "applications": 247,
+      "applications": 291,
       "match_rate": 0.94,
-      "latency_ms": 542.66,
-      "false_positive_ratio": 0.15,
-      "vendor_false_negative_rate": 0.1429
+      "latency_ms": 541.43,
+      "false_positive_ratio": 0.1596,
+      "vendor_false_negative_rate": 0.1111
     },
     {
       "week_start": "2026-04-27",
       "vendor": "baseline_id",
-      "applications": 117,
+      "applications": 140,
       "match_rate": 0.8,
-      "latency_ms": 843.48,
-      "false_positive_ratio": 0.2368,
+      "latency_ms": 849.34,
+      "false_positive_ratio": 0.219,
       "vendor_false_negative_rate": 0.0
     },
     {
       "week_start": "2026-04-27",
       "vendor": "challenger_id",
-      "applications": 123,
+      "applications": 145,
       "match_rate": 0.94,
-      "latency_ms": 546.25,
-      "false_positive_ratio": 0.1639,
-      "vendor_false_negative_rate": 1.0
+      "latency_ms": 547.93,
+      "false_positive_ratio": 0.1748,
+      "vendor_false_negative_rate": 0.5
     }
   ],
   "drift_alerts": [
@@ -364,7 +364,7 @@
       "week_start": "2026-03-16",
       "vendor": "baseline_id",
       "match_rate_change": -0.1505,
-      "latency_change": 0.3614,
+      "latency_change": 0.3641,
       "message": "Control Drift Alert",
       "vendor_recommendation": "Recommend: escalate to vendor SLA review; consider increasing challenger_id traffic share to 60%."
     }
@@ -373,400 +373,400 @@
     {
       "name_match_threshold": 90,
       "ip_risk_threshold": 75,
-      "manual_review_count": 4089,
-      "manual_review_rate": 0.5111,
-      "queue_p95_minutes": 581,
-      "estimated_monthly_savings": 0,
-      "fraud_leakage_rate": 0.0067
-    },
-    {
-      "name_match_threshold": 90,
-      "ip_risk_threshold": 85,
-      "manual_review_count": 4020,
-      "manual_review_rate": 0.5025,
-      "queue_p95_minutes": 587,
-      "estimated_monthly_savings": 0,
-      "fraud_leakage_rate": 0.0069
-    },
-    {
-      "name_match_threshold": 90,
-      "ip_risk_threshold": 80,
-      "manual_review_count": 4045,
-      "manual_review_rate": 0.5056,
-      "queue_p95_minutes": 581,
-      "estimated_monthly_savings": 0,
-      "fraud_leakage_rate": 0.0069
-    },
-    {
-      "name_match_threshold": 87,
-      "ip_risk_threshold": 75,
-      "manual_review_count": 2845,
-      "manual_review_rate": 0.3556,
-      "queue_p95_minutes": 579,
-      "estimated_monthly_savings": 0,
-      "fraud_leakage_rate": 0.0084
-    },
-    {
-      "name_match_threshold": 87,
-      "ip_risk_threshold": 85,
-      "manual_review_count": 2757,
-      "manual_review_rate": 0.3446,
-      "queue_p95_minutes": 587,
-      "estimated_monthly_savings": 0,
-      "fraud_leakage_rate": 0.0085
-    },
-    {
-      "name_match_threshold": 87,
-      "ip_risk_threshold": 80,
-      "manual_review_count": 2789,
-      "manual_review_rate": 0.3486,
-      "queue_p95_minutes": 581,
-      "estimated_monthly_savings": 0,
-      "fraud_leakage_rate": 0.0085
-    },
-    {
-      "name_match_threshold": 83,
-      "ip_risk_threshold": 75,
-      "manual_review_count": 1661,
-      "manual_review_rate": 0.2076,
+      "manual_review_count": 5150,
+      "manual_review_rate": 0.515,
       "queue_p95_minutes": 577,
       "estimated_monthly_savings": 0,
-      "fraud_leakage_rate": 0.0101
+      "fraud_leakage_rate": 0.0069
+    },
+    {
+      "name_match_threshold": 90,
+      "ip_risk_threshold": 85,
+      "manual_review_count": 5072,
+      "manual_review_rate": 0.5072,
+      "queue_p95_minutes": 578,
+      "estimated_monthly_savings": 0,
+      "fraud_leakage_rate": 0.007
+    },
+    {
+      "name_match_threshold": 90,
+      "ip_risk_threshold": 80,
+      "manual_review_count": 5104,
+      "manual_review_rate": 0.5104,
+      "queue_p95_minutes": 577,
+      "estimated_monthly_savings": 0,
+      "fraud_leakage_rate": 0.007
+    },
+    {
+      "name_match_threshold": 87,
+      "ip_risk_threshold": 75,
+      "manual_review_count": 3552,
+      "manual_review_rate": 0.3552,
+      "queue_p95_minutes": 576,
+      "estimated_monthly_savings": 0,
+      "fraud_leakage_rate": 0.0085
+    },
+    {
+      "name_match_threshold": 87,
+      "ip_risk_threshold": 85,
+      "manual_review_count": 3450,
+      "manual_review_rate": 0.345,
+      "queue_p95_minutes": 576,
+      "estimated_monthly_savings": 0,
+      "fraud_leakage_rate": 0.0086
+    },
+    {
+      "name_match_threshold": 87,
+      "ip_risk_threshold": 80,
+      "manual_review_count": 3492,
+      "manual_review_rate": 0.3492,
+      "queue_p95_minutes": 577,
+      "estimated_monthly_savings": 0,
+      "fraud_leakage_rate": 0.0086
+    },
+    {
+      "name_match_threshold": 83,
+      "ip_risk_threshold": 75,
+      "manual_review_count": 2094,
+      "manual_review_rate": 0.2094,
+      "queue_p95_minutes": 575,
+      "estimated_monthly_savings": 0,
+      "fraud_leakage_rate": 0.0102
     },
     {
       "name_match_threshold": 83,
       "ip_risk_threshold": 85,
-      "manual_review_count": 1556,
-      "manual_review_rate": 0.1945,
-      "queue_p95_minutes": 578,
+      "manual_review_count": 1971,
+      "manual_review_rate": 0.1971,
+      "queue_p95_minutes": 575,
       "estimated_monthly_savings": 0,
       "fraud_leakage_rate": 0.0104
     },
     {
       "name_match_threshold": 83,
       "ip_risk_threshold": 80,
-      "manual_review_count": 1590,
-      "manual_review_rate": 0.1988,
-      "queue_p95_minutes": 578,
+      "manual_review_count": 2017,
+      "manual_review_rate": 0.2017,
+      "queue_p95_minutes": 575,
       "estimated_monthly_savings": 0,
       "fraud_leakage_rate": 0.0104
     },
     {
       "name_match_threshold": 80,
       "ip_risk_threshold": 75,
-      "manual_review_count": 1299,
-      "manual_review_rate": 0.1624,
-      "queue_p95_minutes": 579,
-      "estimated_monthly_savings": 1907.4,
+      "manual_review_count": 1622,
+      "manual_review_rate": 0.1622,
+      "queue_p95_minutes": 577,
+      "estimated_monthly_savings": 2588.08,
       "fraud_leakage_rate": 0.0106
     },
     {
       "name_match_threshold": 80,
       "ip_risk_threshold": 85,
-      "manual_review_count": 1187,
-      "manual_review_rate": 0.1484,
-      "queue_p95_minutes": 581,
-      "estimated_monthly_savings": 2745.16,
-      "fraud_leakage_rate": 0.0109
+      "manual_review_count": 1488,
+      "manual_review_rate": 0.1488,
+      "queue_p95_minutes": 577,
+      "estimated_monthly_savings": 3590.4,
+      "fraud_leakage_rate": 0.0108
     },
     {
       "name_match_threshold": 80,
       "ip_risk_threshold": 80,
-      "manual_review_count": 1225,
-      "manual_review_rate": 0.1531,
-      "queue_p95_minutes": 579,
-      "estimated_monthly_savings": 2460.92,
-      "fraud_leakage_rate": 0.0109
+      "manual_review_count": 1539,
+      "manual_review_rate": 0.1539,
+      "queue_p95_minutes": 577,
+      "estimated_monthly_savings": 3208.92,
+      "fraud_leakage_rate": 0.0108
     }
   ],
   "funnel": [
     {
       "step": "identity_form",
-      "applications": 8000,
+      "applications": 10000,
       "conversion_rate": 1.0
     },
     {
       "step": "ssn_check",
-      "applications": 8000,
+      "applications": 10000,
       "conversion_rate": 1.0
     },
     {
       "step": "address_check",
-      "applications": 7839,
-      "conversion_rate": 0.9799
+      "applications": 9798,
+      "conversion_rate": 0.9798
     },
     {
       "step": "doc_upload",
-      "applications": 7676,
-      "conversion_rate": 0.9595
+      "applications": 9594,
+      "conversion_rate": 0.9594
     },
     {
       "step": "selfie_match",
-      "applications": 7420,
-      "conversion_rate": 0.9275
+      "applications": 9267,
+      "conversion_rate": 0.9267
     },
     {
       "step": "approved",
-      "applications": 7232,
-      "conversion_rate": 0.904
+      "applications": 9029,
+      "conversion_rate": 0.9029
     }
   ],
   "rules": [
     {
       "rule": "name_match < 83",
-      "hits": 692,
-      "hit_rate": 0.0865,
-      "fraud_capture_rate": 0.1061,
-      "false_positive_ratio": 0.086,
-      "precision": 0.0303,
+      "hits": 887,
+      "hit_rate": 0.0887,
+      "fraud_capture_rate": 0.1016,
+      "false_positive_ratio": 0.0884,
+      "precision": 0.0282,
       "fraud_leakage_if_removed": 0.0221
     },
     {
       "rule": "doc_mismatch",
-      "hits": 537,
-      "hit_rate": 0.0671,
-      "fraud_capture_rate": 0.1768,
-      "false_positive_ratio": 0.0643,
-      "precision": 0.0652,
-      "fraud_leakage_if_removed": 0.0204
+      "hits": 687,
+      "hit_rate": 0.0687,
+      "fraud_capture_rate": 0.1992,
+      "false_positive_ratio": 0.0654,
+      "precision": 0.0713,
+      "fraud_leakage_if_removed": 0.0197
     },
     {
       "rule": "phone_tenure < 30d",
-      "hits": 319,
-      "hit_rate": 0.0399,
-      "fraud_capture_rate": 0.0657,
-      "false_positive_ratio": 0.0392,
-      "precision": 0.0408,
-      "fraud_leakage_if_removed": 0.0231
-    },
-    {
-      "rule": "ssn_velocity_30d",
-      "hits": 237,
-      "hit_rate": 0.0296,
-      "fraud_capture_rate": 0.1566,
-      "false_positive_ratio": 0.0264,
-      "precision": 0.1308,
-      "fraud_leakage_if_removed": 0.0209
+      "hits": 393,
+      "hit_rate": 0.0393,
+      "fraud_capture_rate": 0.0854,
+      "false_positive_ratio": 0.0381,
+      "precision": 0.0534,
+      "fraud_leakage_if_removed": 0.0225
     },
     {
       "rule": "commercial_po_box",
-      "hits": 236,
-      "hit_rate": 0.0295,
-      "fraud_capture_rate": 0.1515,
-      "false_positive_ratio": 0.0264,
-      "precision": 0.1271,
-      "fraud_leakage_if_removed": 0.021
+      "hits": 309,
+      "hit_rate": 0.0309,
+      "fraud_capture_rate": 0.1585,
+      "false_positive_ratio": 0.0277,
+      "precision": 0.1262,
+      "fraud_leakage_if_removed": 0.0207
+    },
+    {
+      "rule": "ssn_velocity_30d",
+      "hits": 296,
+      "hit_rate": 0.0296,
+      "fraud_capture_rate": 0.1341,
+      "false_positive_ratio": 0.027,
+      "precision": 0.1115,
+      "fraud_leakage_if_removed": 0.0213
     },
     {
       "rule": "sanctions_hit",
-      "hits": 208,
-      "hit_rate": 0.026,
-      "fraud_capture_rate": 0.2424,
-      "false_positive_ratio": 0.0205,
-      "precision": 0.2308,
-      "fraud_leakage_if_removed": 0.0187
+      "hits": 253,
+      "hit_rate": 0.0253,
+      "fraud_capture_rate": 0.248,
+      "false_positive_ratio": 0.0197,
+      "precision": 0.2411,
+      "fraud_leakage_if_removed": 0.0185
     },
     {
       "rule": "device_fp_mismatch",
-      "hits": 205,
-      "hit_rate": 0.0256,
-      "fraud_capture_rate": 0.1111,
+      "hits": 251,
+      "hit_rate": 0.0251,
+      "fraud_capture_rate": 0.0894,
       "false_positive_ratio": 0.0235,
-      "precision": 0.1073,
-      "fraud_leakage_if_removed": 0.022
+      "precision": 0.0876,
+      "fraud_leakage_if_removed": 0.0224
     },
     {
       "rule": "ip_risk_score > 80",
-      "hits": 95,
-      "hit_rate": 0.0119,
-      "fraud_capture_rate": 0.0354,
-      "false_positive_ratio": 0.0113,
-      "precision": 0.0737,
-      "fraud_leakage_if_removed": 0.0239
+      "hits": 120,
+      "hit_rate": 0.012,
+      "fraud_capture_rate": 0.0325,
+      "false_positive_ratio": 0.0115,
+      "precision": 0.0667,
+      "fraud_leakage_if_removed": 0.0238
     }
   ],
   "sanctions": {
-    "screening_hit_rate": 0.026,
-    "false_positive_rate": 0.0205,
-    "tier_1_remediation_count": 162,
+    "screening_hit_rate": 0.0253,
+    "false_positive_rate": 0.0197,
+    "tier_1_remediation_count": 205,
     "avg_time_to_sar_referral_hours": 24
   },
   "monitoring": {
-    "approved_accounts": 7232,
-    "triggered_accounts": 351,
-    "re_review_rate": 0.0485,
+    "approved_accounts": 9029,
+    "triggered_accounts": 444,
+    "re_review_rate": 0.0492,
     "triggers": [
       {
         "trigger": "address_change_30d",
-        "accounts": 109,
-        "re_review_rate": 0.0151,
-        "avg_resolution_hours": 49.0,
+        "accounts": 134,
+        "re_review_rate": 0.0148,
+        "avg_resolution_hours": 48.09,
         "prior_onboarding_flags": 6
       },
       {
         "trigger": "chargeback_dispute",
-        "accounts": 86,
-        "re_review_rate": 0.0119,
-        "avg_resolution_hours": 53.17,
-        "prior_onboarding_flags": 39
+        "accounts": 105,
+        "re_review_rate": 0.0116,
+        "avg_resolution_hours": 54.52,
+        "prior_onboarding_flags": 46
       },
       {
         "trigger": "sanctions_rescan_hit",
-        "accounts": 48,
-        "re_review_rate": 0.0066,
-        "avg_resolution_hours": 66.27,
-        "prior_onboarding_flags": 48
+        "accounts": 63,
+        "re_review_rate": 0.007,
+        "avg_resolution_hours": 65.25,
+        "prior_onboarding_flags": 63
       },
       {
         "trigger": "velocity_flag",
-        "accounts": 108,
-        "re_review_rate": 0.0149,
-        "avg_resolution_hours": 34.89,
-        "prior_onboarding_flags": 5
+        "accounts": 142,
+        "re_review_rate": 0.0157,
+        "avg_resolution_hours": 35.51,
+        "prior_onboarding_flags": 7
       }
     ],
     "outcomes": [
       {
         "outcome": "blocked",
-        "accounts": 74,
-        "share": 0.2108
+        "accounts": 93,
+        "share": 0.2095
       },
       {
         "outcome": "cleared",
-        "accounts": 160,
-        "share": 0.4558
+        "accounts": 197,
+        "share": 0.4437
       },
       {
         "outcome": "escalated",
-        "accounts": 63,
-        "share": 0.1795
+        "accounts": 87,
+        "share": 0.1959
       },
       {
         "outcome": "sar_filed",
-        "accounts": 54,
-        "share": 0.1538
+        "accounts": 67,
+        "share": 0.1509
       }
     ]
   },
   "device_risk": [
     {
       "device": "android",
-      "applications": 3338,
-      "manual_review_rate": 0.192,
-      "fraud_rate": 0.0231,
-      "avg_ip_risk_score": 35.82
+      "applications": 4164,
+      "manual_review_rate": 0.1948,
+      "fraud_rate": 0.0221,
+      "avg_ip_risk_score": 35.74
     },
     {
       "device": "ios",
-      "applications": 3886,
-      "manual_review_rate": 0.1909,
-      "fraud_rate": 0.0262,
-      "avg_ip_risk_score": 32.82
+      "applications": 4868,
+      "manual_review_rate": 0.1937,
+      "fraud_rate": 0.0271,
+      "avg_ip_risk_score": 32.69
     },
     {
       "device": "web",
-      "applications": 776,
-      "manual_review_rate": 0.2204,
-      "fraud_rate": 0.0245,
-      "avg_ip_risk_score": 51.04
+      "applications": 968,
+      "manual_review_rate": 0.2211,
+      "fraud_rate": 0.0227,
+      "avg_ip_risk_score": 50.86
     }
   ],
   "identity_completeness": [
     {
       "segment": "android",
       "attribute": "SSN present",
-      "completion_rate": 0.994
-    },
-    {
-      "segment": "android",
-      "attribute": "SSN verified",
-      "completion_rate": 0.9473
-    },
-    {
-      "segment": "android",
-      "attribute": "Address verified",
-      "completion_rate": 0.9542
-    },
-    {
-      "segment": "android",
-      "attribute": "DOB present",
-      "completion_rate": 0.9946
-    },
-    {
-      "segment": "android",
-      "attribute": "DOB verified",
-      "completion_rate": 0.985
-    },
-    {
-      "segment": "android",
-      "attribute": "Selfie match passed",
-      "completion_rate": 0.8984
-    },
-    {
-      "segment": "ios",
-      "attribute": "SSN present",
       "completion_rate": 0.9933
     },
     {
+      "segment": "android",
+      "attribute": "SSN verified",
+      "completion_rate": 0.9486
+    },
+    {
+      "segment": "android",
+      "attribute": "Address verified",
+      "completion_rate": 0.9512
+    },
+    {
+      "segment": "android",
+      "attribute": "DOB present",
+      "completion_rate": 0.9952
+    },
+    {
+      "segment": "android",
+      "attribute": "DOB verified",
+      "completion_rate": 0.9849
+    },
+    {
+      "segment": "android",
+      "attribute": "Selfie match passed",
+      "completion_rate": 0.8946
+    },
+    {
+      "segment": "ios",
+      "attribute": "SSN present",
+      "completion_rate": 0.9938
+    },
+    {
       "segment": "ios",
       "attribute": "SSN verified",
-      "completion_rate": 0.9439
+      "completion_rate": 0.9425
     },
     {
       "segment": "ios",
       "attribute": "Address verified",
-      "completion_rate": 0.9532
+      "completion_rate": 0.9497
     },
     {
       "segment": "ios",
       "attribute": "DOB present",
-      "completion_rate": 0.9951
+      "completion_rate": 0.9957
     },
     {
       "segment": "ios",
       "attribute": "DOB verified",
-      "completion_rate": 0.9858
+      "completion_rate": 0.9852
     },
     {
       "segment": "ios",
       "attribute": "Selfie match passed",
-      "completion_rate": 0.896
+      "completion_rate": 0.8963
     },
     {
       "segment": "web",
       "attribute": "SSN present",
-      "completion_rate": 0.9923
+      "completion_rate": 0.9928
     },
     {
       "segment": "web",
       "attribute": "SSN verified",
-      "completion_rate": 0.9575
+      "completion_rate": 0.9576
     },
     {
       "segment": "web",
       "attribute": "Address verified",
-      "completion_rate": 0.951
+      "completion_rate": 0.9483
     },
     {
       "segment": "web",
       "attribute": "DOB present",
-      "completion_rate": 0.9948
+      "completion_rate": 0.9938
     },
     {
       "segment": "web",
       "attribute": "DOB verified",
-      "completion_rate": 0.9897
+      "completion_rate": 0.9876
     },
     {
       "segment": "web",
       "attribute": "Selfie match passed",
-      "completion_rate": 0.8608
+      "completion_rate": 0.8605
     }
   ],
   "population_stability": [
     {
       "feature": "ip_risk_score",
-      "psi": 0.0043,
+      "psi": 0.0034,
       "status": "stable",
       "alert_severity": "stable",
       "recommended_action": "Keep current onboarding cutoffs active.",
@@ -774,78 +774,78 @@
         {
           "bin_low": 0.0,
           "bin_high": 10.0,
-          "baseline_pct": 0.0943,
-          "compare_pct": 0.0925,
+          "baseline_pct": 0.094,
+          "compare_pct": 0.0944,
           "bucket_psi": 0.0
         },
         {
           "bin_low": 10.0,
           "bin_high": 20.0,
-          "baseline_pct": 0.115,
-          "compare_pct": 0.1192,
-          "bucket_psi": 0.0002
+          "baseline_pct": 0.1178,
+          "compare_pct": 0.1158,
+          "bucket_psi": 0.0
         },
         {
           "bin_low": 20.0,
           "bin_high": 30.0,
-          "baseline_pct": 0.1638,
-          "compare_pct": 0.171,
-          "bucket_psi": 0.0003
+          "baseline_pct": 0.168,
+          "compare_pct": 0.1704,
+          "bucket_psi": 0.0
         },
         {
           "bin_low": 30.0,
           "bin_high": 40.0,
-          "baseline_pct": 0.1978,
-          "compare_pct": 0.2102,
-          "bucket_psi": 0.0008
+          "baseline_pct": 0.1968,
+          "compare_pct": 0.2088,
+          "bucket_psi": 0.0007
         },
         {
           "bin_low": 40.0,
           "bin_high": 50.0,
-          "baseline_pct": 0.1805,
-          "compare_pct": 0.171,
-          "bucket_psi": 0.0005
+          "baseline_pct": 0.1794,
+          "compare_pct": 0.1756,
+          "bucket_psi": 0.0001
         },
         {
           "bin_low": 50.0,
           "bin_high": 60.0,
-          "baseline_pct": 0.1345,
-          "compare_pct": 0.1225,
-          "bucket_psi": 0.0011
+          "baseline_pct": 0.1302,
+          "compare_pct": 0.1268,
+          "bucket_psi": 0.0001
         },
         {
           "bin_low": 60.0,
           "bin_high": 70.0,
-          "baseline_pct": 0.0705,
-          "compare_pct": 0.0648,
-          "bucket_psi": 0.0005
+          "baseline_pct": 0.071,
+          "compare_pct": 0.0622,
+          "bucket_psi": 0.0012
         },
         {
           "bin_low": 70.0,
           "bin_high": 80.0,
-          "baseline_pct": 0.03,
-          "compare_pct": 0.034,
-          "bucket_psi": 0.0005
+          "baseline_pct": 0.0298,
+          "compare_pct": 0.0308,
+          "bucket_psi": 0.0
         },
         {
           "bin_low": 80.0,
           "bin_high": 90.0,
-          "baseline_pct": 0.01,
-          "compare_pct": 0.0118,
-          "bucket_psi": 0.0003
+          "baseline_pct": 0.0094,
+          "compare_pct": 0.0126,
+          "bucket_psi": 0.0009
         },
         {
           "bin_low": 90.0,
           "bin_high": 100.0,
-          "baseline_pct": 0.0037,
-          "compare_pct": 0.003,
-          "bucket_psi": 0.0002
+          "baseline_pct": 0.0036,
+          "compare_pct": 0.0026,
+          "bucket_psi": 0.0003
         }
       ]
     },
     {
       "feature": "name_match_score",
-      "psi": 0.004,
+      "psi": 0.0023,
       "status": "stable",
       "alert_severity": "stable",
       "recommended_action": "Keep current onboarding cutoffs active.",
@@ -853,78 +853,78 @@
         {
           "bin_low": 66.0,
           "bin_high": 69.4,
-          "baseline_pct": 0.0003,
-          "compare_pct": 0.0,
-          "bucket_psi": 0.0014
+          "baseline_pct": 0.0002,
+          "compare_pct": 0.0002,
+          "bucket_psi": 0.0
         },
         {
           "bin_low": 69.4,
           "bin_high": 72.8,
-          "baseline_pct": 0.002,
-          "compare_pct": 0.0013,
-          "bucket_psi": 0.0004
+          "baseline_pct": 0.0022,
+          "compare_pct": 0.0016,
+          "bucket_psi": 0.0002
         },
         {
           "bin_low": 72.8,
           "bin_high": 76.2,
-          "baseline_pct": 0.0085,
-          "compare_pct": 0.0083,
-          "bucket_psi": 0.0
+          "baseline_pct": 0.0086,
+          "compare_pct": 0.0078,
+          "bucket_psi": 0.0001
         },
         {
           "bin_low": 76.2,
           "bin_high": 79.6,
-          "baseline_pct": 0.0227,
-          "compare_pct": 0.021,
-          "bucket_psi": 0.0001
+          "baseline_pct": 0.0244,
+          "compare_pct": 0.0214,
+          "bucket_psi": 0.0004
         },
         {
           "bin_low": 79.6,
           "bin_high": 83.0,
-          "baseline_pct": 0.056,
-          "compare_pct": 0.053,
-          "bucket_psi": 0.0002
+          "baseline_pct": 0.0562,
+          "compare_pct": 0.0548,
+          "bucket_psi": 0.0
         },
         {
           "bin_low": 83.0,
           "bin_high": 86.4,
-          "baseline_pct": 0.167,
-          "compare_pct": 0.1725,
-          "bucket_psi": 0.0002
+          "baseline_pct": 0.1656,
+          "compare_pct": 0.17,
+          "bucket_psi": 0.0001
         },
         {
           "bin_low": 86.4,
           "bin_high": 89.8,
-          "baseline_pct": 0.177,
-          "compare_pct": 0.1755,
+          "baseline_pct": 0.1808,
+          "compare_pct": 0.181,
           "bucket_psi": 0.0
         },
         {
           "bin_low": 89.8,
           "bin_high": 93.2,
-          "baseline_pct": 0.2455,
-          "compare_pct": 0.259,
-          "bucket_psi": 0.0007
+          "baseline_pct": 0.2478,
+          "compare_pct": 0.2548,
+          "bucket_psi": 0.0002
         },
         {
           "bin_low": 93.2,
           "bin_high": 96.6,
-          "baseline_pct": 0.158,
-          "compare_pct": 0.1452,
-          "bucket_psi": 0.0011
+          "baseline_pct": 0.1556,
+          "compare_pct": 0.1432,
+          "bucket_psi": 0.001
         },
         {
           "bin_low": 96.6,
           "bin_high": 100.0,
-          "baseline_pct": 0.163,
-          "compare_pct": 0.1643,
-          "bucket_psi": 0.0
+          "baseline_pct": 0.1586,
+          "compare_pct": 0.1652,
+          "bucket_psi": 0.0003
         }
       ]
     },
     {
       "feature": "phone_tenure_days",
-      "psi": 0.0026,
+      "psi": 0.002,
       "status": "stable",
       "alert_severity": "stable",
       "recommended_action": "Keep current onboarding cutoffs active.",
@@ -932,78 +932,78 @@
         {
           "bin_low": 0.0,
           "bin_high": 73.0,
-          "baseline_pct": 0.1017,
-          "compare_pct": 0.0973,
-          "bucket_psi": 0.0002
+          "baseline_pct": 0.102,
+          "compare_pct": 0.0966,
+          "bucket_psi": 0.0003
         },
         {
           "bin_low": 73.0,
           "bin_high": 146.0,
-          "baseline_pct": 0.0927,
-          "compare_pct": 0.0968,
-          "bucket_psi": 0.0002
+          "baseline_pct": 0.0972,
+          "compare_pct": 0.0948,
+          "bucket_psi": 0.0001
         },
         {
           "bin_low": 146.0,
           "bin_high": 219.0,
-          "baseline_pct": 0.0983,
-          "compare_pct": 0.1055,
-          "bucket_psi": 0.0005
+          "baseline_pct": 0.0992,
+          "compare_pct": 0.1054,
+          "bucket_psi": 0.0004
         },
         {
           "bin_low": 219.0,
           "bin_high": 292.0,
-          "baseline_pct": 0.1003,
-          "compare_pct": 0.1013,
+          "baseline_pct": 0.101,
+          "compare_pct": 0.1024,
           "bucket_psi": 0.0
         },
         {
           "bin_low": 292.0,
           "bin_high": 365.0,
-          "baseline_pct": 0.101,
-          "compare_pct": 0.1042,
-          "bucket_psi": 0.0001
+          "baseline_pct": 0.1036,
+          "compare_pct": 0.1046,
+          "bucket_psi": 0.0
         },
         {
           "bin_low": 365.0,
           "bin_high": 438.0,
-          "baseline_pct": 0.0965,
-          "compare_pct": 0.0978,
+          "baseline_pct": 0.0986,
+          "compare_pct": 0.0994,
           "bucket_psi": 0.0
         },
         {
           "bin_low": 438.0,
           "bin_high": 511.0,
-          "baseline_pct": 0.1035,
-          "compare_pct": 0.094,
-          "bucket_psi": 0.0009
+          "baseline_pct": 0.0998,
+          "compare_pct": 0.0956,
+          "bucket_psi": 0.0002
         },
         {
           "bin_low": 511.0,
           "bin_high": 584.0,
-          "baseline_pct": 0.102,
-          "compare_pct": 0.0973,
-          "bucket_psi": 0.0002
+          "baseline_pct": 0.1004,
+          "compare_pct": 0.0982,
+          "bucket_psi": 0.0
         },
         {
           "bin_low": 584.0,
           "bin_high": 657.0,
-          "baseline_pct": 0.104,
-          "compare_pct": 0.1005,
-          "bucket_psi": 0.0001
+          "baseline_pct": 0.1036,
+          "compare_pct": 0.0992,
+          "bucket_psi": 0.0002
         },
         {
           "bin_low": 657.0,
           "bin_high": 730.0,
-          "baseline_pct": 0.1,
-          "compare_pct": 0.1055,
-          "bucket_psi": 0.0003
+          "baseline_pct": 0.0946,
+          "compare_pct": 0.1038,
+          "bucket_psi": 0.0009
         }
       ]
     },
     {
       "feature": "vendor_latency_ms",
-      "psi": 0.6475,
+      "psi": 0.6442,
       "status": "major_shift_recalibrate",
       "alert_severity": "critical",
       "recommended_action": "Deploy secondary fallback vendor cascade and flag decisioning thresholds for immediate re-tuning.",
@@ -1011,72 +1011,72 @@
         {
           "bin_low": 125.0,
           "bin_high": 241.5,
-          "baseline_pct": 0.0057,
-          "compare_pct": 0.0027,
-          "bucket_psi": 0.0022
+          "baseline_pct": 0.0058,
+          "compare_pct": 0.0034,
+          "bucket_psi": 0.0013
         },
         {
           "bin_low": 241.5,
           "bin_high": 358.0,
-          "baseline_pct": 0.0333,
-          "compare_pct": 0.036,
-          "bucket_psi": 0.0002
+          "baseline_pct": 0.0332,
+          "compare_pct": 0.0352,
+          "bucket_psi": 0.0001
         },
         {
           "bin_low": 358.0,
           "bin_high": 474.5,
-          "baseline_pct": 0.177,
-          "compare_pct": 0.1235,
-          "bucket_psi": 0.0193
+          "baseline_pct": 0.1786,
+          "compare_pct": 0.1246,
+          "bucket_psi": 0.0194
         },
         {
           "bin_low": 474.5,
           "bin_high": 591.0,
-          "baseline_pct": 0.3375,
-          "compare_pct": 0.2422,
-          "bucket_psi": 0.0316
+          "baseline_pct": 0.3376,
+          "compare_pct": 0.2406,
+          "bucket_psi": 0.0329
         },
         {
           "bin_low": 591.0,
           "bin_high": 707.5,
-          "baseline_pct": 0.3045,
-          "compare_pct": 0.2087,
-          "bucket_psi": 0.0361
+          "baseline_pct": 0.3024,
+          "compare_pct": 0.2104,
+          "bucket_psi": 0.0334
         },
         {
           "bin_low": 707.5,
           "bin_high": 824.0,
-          "baseline_pct": 0.1182,
-          "compare_pct": 0.1752,
-          "bucket_psi": 0.0224
+          "baseline_pct": 0.1186,
+          "compare_pct": 0.1726,
+          "bucket_psi": 0.0203
         },
         {
           "bin_low": 824.0,
           "bin_high": 940.5,
-          "baseline_pct": 0.0225,
-          "compare_pct": 0.142,
-          "bucket_psi": 0.2202
+          "baseline_pct": 0.0222,
+          "compare_pct": 0.1404,
+          "bucket_psi": 0.218
         },
         {
           "bin_low": 940.5,
           "bin_high": 1057.0,
-          "baseline_pct": 0.0013,
-          "compare_pct": 0.059,
-          "bucket_psi": 0.2226
+          "baseline_pct": 0.0016,
+          "compare_pct": 0.0616,
+          "bucket_psi": 0.219
         },
         {
           "bin_low": 1057.0,
           "bin_high": 1173.5,
           "baseline_pct": 0.0,
-          "compare_pct": 0.009,
-          "bucket_psi": 0.0819
+          "compare_pct": 0.0096,
+          "bucket_psi": 0.088
         },
         {
           "bin_low": 1173.5,
           "bin_high": 1290.0,
           "baseline_pct": 0.0,
-          "compare_pct": 0.0015,
-          "bucket_psi": 0.011
+          "compare_pct": 0.0016,
+          "bucket_psi": 0.0118
         }
       ]
     }
