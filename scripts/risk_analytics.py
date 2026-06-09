@@ -10,6 +10,7 @@ import argparse
 import csv
 import json
 import logging
+import time
 from collections import defaultdict
 from math import log
 from pathlib import Path
@@ -112,6 +113,68 @@ def calculate_psi(current_distribution, baseline_distribution):
     return round(psi, 4)
 
 
+def _clean_numeric_series(values):
+    series = pd.to_numeric(pd.Series(values), errors="coerce")
+    return series.replace([np.inf, -np.inf], np.nan).dropna()
+
+
+def _population_stability_components(baseline, current, buckets):
+    baseline_series = _clean_numeric_series(baseline)
+    current_series = _clean_numeric_series(current)
+
+    if baseline_series.empty or current_series.empty:
+        raise ValueError("baseline or current population is empty")
+
+    bucket_count = max(2, int(buckets))
+    quantiles = np.linspace(0, 100, bucket_count + 1)
+    bin_edges = np.unique(np.percentile(baseline_series.to_numpy(), quantiles))
+
+    if len(bin_edges) < 2:
+        raise ValueError("baseline distribution is constant")
+
+    bin_edges[0] = -np.inf
+    bin_edges[-1] = np.inf
+
+    baseline_counts, _ = np.histogram(baseline_series.to_numpy(), bins=bin_edges)
+    current_counts, _ = np.histogram(current_series.to_numpy(), bins=bin_edges)
+
+    baseline_pct = baseline_counts / len(baseline_series)
+    current_pct = current_counts / len(current_series)
+
+    baseline_pct = np.where(baseline_pct == 0, 0.0001, baseline_pct)
+    current_pct = np.where(current_pct == 0, 0.0001, current_pct)
+
+    psi = np.sum((current_pct - baseline_pct) * np.log(current_pct / baseline_pct))
+    return {
+        "psi": round(float(psi), 4),
+        "bin_edges": bin_edges,
+        "baseline_counts": baseline_counts,
+        "current_counts": current_counts,
+        "baseline_size": len(baseline_series),
+        "current_size": len(current_series),
+        "baseline_series": baseline_series,
+        "current_series": current_series,
+    }
+
+
+def calculate_population_stability_index(baseline, current, buckets=10):
+    """
+    Calculate PSI from raw score vectors using vectorized, poison-resistant binning.
+
+    Malformed values, infinities, and nulls are discarded. Degenerate inputs return
+    0.0 so monitoring pipelines stay available while upstream data issues are logged.
+    """
+    try:
+        return _population_stability_components(baseline, current, buckets)["psi"]
+    except ValueError as exc:
+        log_level = logging.WARNING if "constant" in str(exc) else logging.ERROR
+        logging.log(log_level, "PSI calculation returned 0.0: %s.", exc)
+        return 0.0
+    except Exception as exc:
+        logging.critical("PSI calculation failed closed with sanitized output: %s", exc)
+        return 0.0
+
+
 def evaluate_population_stability(current_distribution, baseline_distribution):
     psi_value = calculate_psi(current_distribution, baseline_distribution)
     return psi_alert_from_value(psi_value)
@@ -166,6 +229,63 @@ class RiskEngine:
 
     def evaluate_population_stability(self, current_distribution, baseline_distribution):
         return evaluate_population_stability(current_distribution, baseline_distribution)
+
+
+class IdentityVendorCircuitBreaker:
+    """
+    Stateful guardrail for identity vendor degradation.
+
+    Opens when repeated failures or high-latency responses suggest the primary identity
+    vendor is unsafe for automated approval decisions.
+    """
+
+    def __init__(self, failure_threshold=3, recovery_timeout_seconds=300, latency_threshold_ms=1200):
+        self.failure_threshold = failure_threshold
+        self.recovery_timeout = recovery_timeout_seconds
+        self.latency_threshold_ms = latency_threshold_ms
+        self.failure_count = 0
+        self.state = "CLOSED"
+        self.last_state_change = time.monotonic()
+
+    def allow_request(self):
+        if self.state == "OPEN":
+            return False
+        return True
+
+    def record_execution(self, success, latency_ms):
+        latency = AdvancedRiskEngine._coerce_float(latency_ms, float("inf"))
+        degraded = not bool(success) or latency > self.latency_threshold_ms
+
+        if self.state == "OPEN":
+            if time.monotonic() - self.last_state_change >= self.recovery_timeout:
+                self._transition("HALF_OPEN")
+            else:
+                return self.state
+
+        if self.state == "HALF_OPEN":
+            if degraded:
+                self.failure_count = self.failure_threshold
+                self._transition("OPEN")
+            else:
+                self.failure_count = 0
+                self._transition("CLOSED")
+            return self.state
+
+        if degraded:
+            self.failure_count += 1
+            if self.failure_count >= self.failure_threshold:
+                self._transition("OPEN")
+                logging.error("Identity vendor circuit opened after repeated degradation.")
+        else:
+            self.failure_count = max(0, self.failure_count - 1)
+
+        return self.state
+
+    def _transition(self, state):
+        if self.state != state:
+            logging.info("Identity vendor circuit transition: %s -> %s", self.state, state)
+            self.state = state
+            self.last_state_change = time.monotonic()
 
 
 class AdvancedRiskEngine(RiskEngine):
@@ -551,49 +671,42 @@ def identity_attribute_completeness(rows):
 def population_stability_index(rows, feature, n_bins=10):
     sorted_rows = sorted(rows, key=lambda row: row["created_at"])
     mid = len(sorted_rows) // 2
-    baseline_vals = [row[feature] for row in sorted_rows[:mid] if isinstance(row[feature], (int, float))]
-    compare_vals = [row[feature] for row in sorted_rows[mid:] if isinstance(row[feature], (int, float))]
+    baseline_vals = _clean_numeric_series(row.get(feature) for row in sorted_rows[:mid])
+    compare_vals = _clean_numeric_series(row.get(feature) for row in sorted_rows[mid:])
 
-    if not baseline_vals or not compare_vals:
+    if baseline_vals.empty or compare_vals.empty:
         return {"feature": feature, "psi": None, "status": "insufficient_data", "bins": []}
 
-    all_vals = baseline_vals + compare_vals
-    min_v, max_v = min(all_vals), max(all_vals)
+    all_vals = pd.concat([baseline_vals, compare_vals], ignore_index=True)
+    min_v = float(all_vals.min())
+    max_v = float(all_vals.max())
     if min_v == max_v:
         return {"feature": feature, "psi": 0.0, "status": "stable", "bins": []}
 
-    bin_edges = [min_v + i * (max_v - min_v) / n_bins for i in range(n_bins + 1)]
-    bin_edges[-1] += 1e-9
+    components = _population_stability_components(baseline_vals, compare_vals, n_bins)
+    bin_edges = components["bin_edges"].copy()
+    display_edges = bin_edges.copy()
+    display_edges[0] = min_v
+    display_edges[-1] = max_v
+    base_counts = components["baseline_counts"]
+    comp_counts = components["current_counts"]
+    n_base = components["baseline_size"]
+    n_comp = components["current_size"]
 
-    def bin_counts(values):
-        counts = [0] * n_bins
-        for value in values:
-            for index in range(n_bins):
-                if bin_edges[index] <= value < bin_edges[index + 1]:
-                    counts[index] += 1
-                    break
-        return counts
-
-    base_counts = bin_counts(baseline_vals)
-    comp_counts = bin_counts(compare_vals)
-    n_base, n_comp = len(baseline_vals), len(compare_vals)
-
-    psi = 0.0
+    psi = components["psi"]
     bins = []
-    for index in range(n_bins):
-        base_pct = max(base_counts[index] / n_base, 1e-6)
-        comp_pct = max(comp_counts[index] / n_comp, 1e-6)
+    for index in range(len(bin_edges) - 1):
+        base_pct = max(base_counts[index] / n_base, 0.0001)
+        comp_pct = max(comp_counts[index] / n_comp, 0.0001)
         bucket_psi = (comp_pct - base_pct) * log(comp_pct / base_pct)
-        psi += bucket_psi
         bins.append({
-            "bin_low": round(bin_edges[index], 2),
-            "bin_high": round(bin_edges[index + 1], 2),
+            "bin_low": round(display_edges[index], 2),
+            "bin_high": round(display_edges[index + 1], 2),
             "baseline_pct": round(base_pct, 4),
             "compare_pct": round(comp_pct, 4),
             "bucket_psi": round(bucket_psi, 4),
         })
 
-    psi = round(psi, 4)
     alert = psi_alert_from_value(psi)
     status = "stable" if psi < 0.10 else ("moderate_shift" if psi < 0.25 else "major_shift_recalibrate")
     return {

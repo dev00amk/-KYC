@@ -12,7 +12,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from generate_synthetic_data import generate_rows
 from risk_analytics import (
     AdvancedRiskEngine,
+    IdentityVendorCircuitBreaker,
     RiskEngine,
+    calculate_population_stability_index,
     evaluate_population_stability,
     lookback_population,
     population_monitoring,
@@ -223,6 +225,41 @@ class AnalyticsTests(unittest.TestCase):
 
         self.assertEqual(routing["U_BAD_1"], "CHALLENGER_SECONDARY_CASCADE")
         self.assertEqual(routing["U_BAD_2"], "CHALLENGER_SECONDARY_CASCADE")
+
+    def test_vectorized_psi_survives_poisoned_current_payload(self):
+        rng = np.random.default_rng(326)
+        baseline_scores = pd.Series(rng.normal(0.5, 0.1, 1000))
+        poisoned_current = pd.Series([np.nan, np.inf, -np.inf, "corrupted_payload", 0.5, 0.6])
+
+        result = calculate_population_stability_index(baseline_scores, poisoned_current)
+
+        self.assertIsInstance(result, float)
+        self.assertFalse(np.isnan(result))
+
+    def test_vectorized_psi_handles_constant_distribution(self):
+        result = calculate_population_stability_index([0.7, 0.7, 0.7], [0.7, 0.7])
+
+        self.assertEqual(result, 0.0)
+
+    def test_vectorized_psi_handles_empty_current_distribution(self):
+        result = calculate_population_stability_index([0.1, 0.2, 0.3], [np.nan, np.inf, "bad"])
+
+        self.assertEqual(result, 0.0)
+
+    def test_identity_vendor_circuit_breaker_opens_and_recovers(self):
+        breaker = IdentityVendorCircuitBreaker(failure_threshold=2, recovery_timeout_seconds=0)
+
+        self.assertTrue(breaker.allow_request())
+        breaker.record_execution(success=False, latency_ms=100)
+        self.assertEqual(breaker.state, "CLOSED")
+
+        breaker.record_execution(success=True, latency_ms=1500)
+        self.assertEqual(breaker.state, "OPEN")
+        self.assertFalse(breaker.allow_request())
+
+        breaker.record_execution(success=True, latency_ms=100)
+        self.assertEqual(breaker.state, "CLOSED")
+        self.assertTrue(breaker.allow_request())
 
 
 if __name__ == "__main__":

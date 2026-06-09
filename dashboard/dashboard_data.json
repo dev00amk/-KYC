@@ -766,7 +766,7 @@
   "population_stability": [
     {
       "feature": "ip_risk_score",
-      "psi": 0.0034,
+      "psi": 0.0041,
       "status": "stable",
       "alert_severity": "stable",
       "recommended_action": "Keep current onboarding cutoffs active.",
@@ -780,303 +780,303 @@
         },
         {
           "bin_low": 10.0,
-          "bin_high": 20.0,
-          "baseline_pct": 0.1178,
-          "compare_pct": 0.1158,
-          "bucket_psi": 0.0
+          "bin_high": 19.0,
+          "baseline_pct": 0.1036,
+          "compare_pct": 0.0974,
+          "bucket_psi": 0.0004
         },
         {
-          "bin_low": 20.0,
-          "bin_high": 30.0,
-          "baseline_pct": 0.168,
-          "compare_pct": 0.1704,
-          "bucket_psi": 0.0
+          "bin_low": 19.0,
+          "bin_high": 25.0,
+          "baseline_pct": 0.0932,
+          "compare_pct": 0.105,
+          "bucket_psi": 0.0014
         },
         {
-          "bin_low": 30.0,
-          "bin_high": 40.0,
-          "baseline_pct": 0.1968,
-          "compare_pct": 0.2088,
+          "bin_low": 25.0,
+          "bin_high": 31.0,
+          "baseline_pct": 0.1088,
+          "compare_pct": 0.1054,
+          "bucket_psi": 0.0001
+        },
+        {
+          "bin_low": 31.0,
+          "bin_high": 36.0,
+          "baseline_pct": 0.0978,
+          "compare_pct": 0.1022,
+          "bucket_psi": 0.0002
+        },
+        {
+          "bin_low": 36.0,
+          "bin_high": 41.0,
+          "baseline_pct": 0.1018,
+          "compare_pct": 0.105,
+          "bucket_psi": 0.0001
+        },
+        {
+          "bin_low": 41.0,
+          "bin_high": 46.0,
+          "baseline_pct": 0.0878,
+          "compare_pct": 0.0956,
           "bucket_psi": 0.0007
         },
         {
-          "bin_low": 40.0,
-          "bin_high": 50.0,
-          "baseline_pct": 0.1794,
-          "compare_pct": 0.1756,
-          "bucket_psi": 0.0001
+          "bin_low": 46.0,
+          "bin_high": 52.0,
+          "baseline_pct": 0.0956,
+          "compare_pct": 0.089,
+          "bucket_psi": 0.0005
         },
         {
-          "bin_low": 50.0,
-          "bin_high": 60.0,
-          "baseline_pct": 0.1302,
-          "compare_pct": 0.1268,
-          "bucket_psi": 0.0001
+          "bin_low": 52.0,
+          "bin_high": 61.0,
+          "baseline_pct": 0.1158,
+          "compare_pct": 0.1068,
+          "bucket_psi": 0.0007
         },
         {
-          "bin_low": 60.0,
-          "bin_high": 70.0,
-          "baseline_pct": 0.071,
-          "compare_pct": 0.0622,
-          "bucket_psi": 0.0012
-        },
-        {
-          "bin_low": 70.0,
-          "bin_high": 80.0,
-          "baseline_pct": 0.0298,
-          "compare_pct": 0.0308,
-          "bucket_psi": 0.0
-        },
-        {
-          "bin_low": 80.0,
-          "bin_high": 90.0,
-          "baseline_pct": 0.0094,
-          "compare_pct": 0.0126,
-          "bucket_psi": 0.0009
-        },
-        {
-          "bin_low": 90.0,
+          "bin_low": 61.0,
           "bin_high": 100.0,
-          "baseline_pct": 0.0036,
-          "compare_pct": 0.0026,
-          "bucket_psi": 0.0003
+          "baseline_pct": 0.1016,
+          "compare_pct": 0.0992,
+          "bucket_psi": 0.0001
         }
       ]
     },
     {
       "feature": "name_match_score",
-      "psi": 0.0023,
+      "psi": 0.0061,
       "status": "stable",
       "alert_severity": "stable",
       "recommended_action": "Keep current onboarding cutoffs active.",
       "bins": [
         {
           "bin_low": 66.0,
-          "bin_high": 69.4,
-          "baseline_pct": 0.0002,
-          "compare_pct": 0.0002,
-          "bucket_psi": 0.0
-        },
-        {
-          "bin_low": 69.4,
-          "bin_high": 72.8,
-          "baseline_pct": 0.0022,
-          "compare_pct": 0.0016,
-          "bucket_psi": 0.0002
-        },
-        {
-          "bin_low": 72.8,
-          "bin_high": 76.2,
-          "baseline_pct": 0.0086,
-          "compare_pct": 0.0078,
-          "bucket_psi": 0.0001
-        },
-        {
-          "bin_low": 76.2,
-          "bin_high": 79.6,
-          "baseline_pct": 0.0244,
-          "compare_pct": 0.0214,
+          "bin_high": 83.0,
+          "baseline_pct": 0.0916,
+          "compare_pct": 0.0858,
           "bucket_psi": 0.0004
         },
         {
-          "bin_low": 79.6,
-          "bin_high": 83.0,
-          "baseline_pct": 0.0562,
-          "compare_pct": 0.0548,
-          "bucket_psi": 0.0
-        },
-        {
           "bin_low": 83.0,
-          "bin_high": 86.4,
-          "baseline_pct": 0.1656,
-          "compare_pct": 0.17,
-          "bucket_psi": 0.0001
-        },
-        {
-          "bin_low": 86.4,
-          "bin_high": 89.8,
-          "baseline_pct": 0.1808,
-          "compare_pct": 0.181,
-          "bucket_psi": 0.0
-        },
-        {
-          "bin_low": 89.8,
-          "bin_high": 93.2,
-          "baseline_pct": 0.2478,
-          "compare_pct": 0.2548,
+          "bin_high": 85.0,
+          "baseline_pct": 0.0706,
+          "compare_pct": 0.0746,
           "bucket_psi": 0.0002
         },
         {
-          "bin_low": 93.2,
-          "bin_high": 96.6,
-          "baseline_pct": 0.1556,
-          "compare_pct": 0.1432,
-          "bucket_psi": 0.001
+          "bin_low": 85.0,
+          "bin_high": 87.0,
+          "baseline_pct": 0.095,
+          "compare_pct": 0.0954,
+          "bucket_psi": 0.0
         },
         {
-          "bin_low": 96.6,
+          "bin_low": 87.0,
+          "bin_high": 89.0,
+          "baseline_pct": 0.1126,
+          "compare_pct": 0.1146,
+          "bucket_psi": 0.0
+        },
+        {
+          "bin_low": 89.0,
+          "bin_high": 90.0,
+          "baseline_pct": 0.0682,
+          "compare_pct": 0.0664,
+          "bucket_psi": 0.0
+        },
+        {
+          "bin_low": 90.0,
+          "bin_high": 92.0,
+          "baseline_pct": 0.1232,
+          "compare_pct": 0.1278,
+          "bucket_psi": 0.0002
+        },
+        {
+          "bin_low": 92.0,
+          "bin_high": 94.0,
+          "baseline_pct": 0.1246,
+          "compare_pct": 0.127,
+          "bucket_psi": 0.0
+        },
+        {
+          "bin_low": 94.0,
+          "bin_high": 96.0,
+          "baseline_pct": 0.1052,
+          "compare_pct": 0.104,
+          "bucket_psi": 0.0
+        },
+        {
+          "bin_low": 96.0,
+          "bin_high": 98.0,
+          "baseline_pct": 0.09,
+          "compare_pct": 0.0724,
+          "bucket_psi": 0.0038
+        },
+        {
+          "bin_low": 98.0,
           "bin_high": 100.0,
-          "baseline_pct": 0.1586,
-          "compare_pct": 0.1652,
-          "bucket_psi": 0.0003
+          "baseline_pct": 0.119,
+          "compare_pct": 0.132,
+          "bucket_psi": 0.0013
         }
       ]
     },
     {
       "feature": "phone_tenure_days",
-      "psi": 0.002,
+      "psi": 0.0015,
       "status": "stable",
       "alert_severity": "stable",
       "recommended_action": "Keep current onboarding cutoffs active.",
       "bins": [
         {
           "bin_low": 0.0,
-          "bin_high": 73.0,
-          "baseline_pct": 0.102,
-          "compare_pct": 0.0966,
-          "bucket_psi": 0.0003
-        },
-        {
-          "bin_low": 73.0,
-          "bin_high": 146.0,
-          "baseline_pct": 0.0972,
-          "compare_pct": 0.0948,
-          "bucket_psi": 0.0001
-        },
-        {
-          "bin_low": 146.0,
-          "bin_high": 219.0,
-          "baseline_pct": 0.0992,
-          "compare_pct": 0.1054,
+          "bin_high": 71.0,
+          "baseline_pct": 0.0996,
+          "compare_pct": 0.0934,
           "bucket_psi": 0.0004
         },
         {
-          "bin_low": 219.0,
+          "bin_low": 71.0,
+          "bin_high": 146.0,
+          "baseline_pct": 0.0996,
+          "compare_pct": 0.098,
+          "bucket_psi": 0.0
+        },
+        {
+          "bin_low": 146.0,
+          "bin_high": 220.0,
+          "baseline_pct": 0.1,
+          "compare_pct": 0.1064,
+          "bucket_psi": 0.0004
+        },
+        {
+          "bin_low": 220.0,
           "bin_high": 292.0,
-          "baseline_pct": 0.101,
-          "compare_pct": 0.1024,
+          "baseline_pct": 0.1002,
+          "compare_pct": 0.1014,
           "bucket_psi": 0.0
         },
         {
           "bin_low": 292.0,
-          "bin_high": 365.0,
-          "baseline_pct": 0.1036,
-          "compare_pct": 0.1046,
+          "bin_high": 362.0,
+          "baseline_pct": 0.0988,
+          "compare_pct": 0.0998,
           "bucket_psi": 0.0
         },
         {
-          "bin_low": 365.0,
-          "bin_high": 438.0,
-          "baseline_pct": 0.0986,
-          "compare_pct": 0.0994,
+          "bin_low": 362.0,
+          "bin_high": 436.0,
+          "baseline_pct": 0.1012,
+          "compare_pct": 0.1008,
           "bucket_psi": 0.0
         },
         {
-          "bin_low": 438.0,
-          "bin_high": 511.0,
-          "baseline_pct": 0.0998,
-          "compare_pct": 0.0956,
-          "bucket_psi": 0.0002
+          "bin_low": 436.0,
+          "bin_high": 510.0,
+          "baseline_pct": 0.1002,
+          "compare_pct": 0.0976,
+          "bucket_psi": 0.0001
         },
         {
-          "bin_low": 511.0,
-          "bin_high": 584.0,
-          "baseline_pct": 0.1004,
-          "compare_pct": 0.0982,
+          "bin_low": 510.0,
+          "bin_high": 583.0,
+          "baseline_pct": 0.1,
+          "compare_pct": 0.099,
           "bucket_psi": 0.0
         },
         {
-          "bin_low": 584.0,
-          "bin_high": 657.0,
-          "baseline_pct": 0.1036,
-          "compare_pct": 0.0992,
-          "bucket_psi": 0.0002
+          "bin_low": 583.0,
+          "bin_high": 653.0,
+          "baseline_pct": 0.0988,
+          "compare_pct": 0.0952,
+          "bucket_psi": 0.0001
         },
         {
-          "bin_low": 657.0,
+          "bin_low": 653.0,
           "bin_high": 730.0,
-          "baseline_pct": 0.0946,
-          "compare_pct": 0.1038,
-          "bucket_psi": 0.0009
+          "baseline_pct": 0.1016,
+          "compare_pct": 0.1084,
+          "bucket_psi": 0.0004
         }
       ]
     },
     {
       "feature": "vendor_latency_ms",
-      "psi": 0.6442,
+      "psi": 0.3951,
       "status": "major_shift_recalibrate",
       "alert_severity": "critical",
       "recommended_action": "Deploy secondary fallback vendor cascade and flag decisioning thresholds for immediate re-tuning.",
       "bins": [
         {
           "bin_low": 125.0,
-          "bin_high": 241.5,
-          "baseline_pct": 0.0058,
-          "compare_pct": 0.0034,
-          "bucket_psi": 0.0013
+          "bin_high": 413.9,
+          "baseline_pct": 0.1,
+          "compare_pct": 0.0798,
+          "bucket_psi": 0.0046
         },
         {
-          "bin_low": 241.5,
-          "bin_high": 358.0,
-          "baseline_pct": 0.0332,
-          "compare_pct": 0.0352,
-          "bucket_psi": 0.0001
+          "bin_low": 413.9,
+          "bin_high": 468.0,
+          "baseline_pct": 0.0998,
+          "compare_pct": 0.0682,
+          "bucket_psi": 0.012
         },
         {
-          "bin_low": 358.0,
-          "bin_high": 474.5,
-          "baseline_pct": 0.1786,
-          "compare_pct": 0.1246,
-          "bucket_psi": 0.0194
+          "bin_low": 468.0,
+          "bin_high": 508.0,
+          "baseline_pct": 0.0974,
+          "compare_pct": 0.08,
+          "bucket_psi": 0.0034
         },
         {
-          "bin_low": 474.5,
-          "bin_high": 591.0,
-          "baseline_pct": 0.3376,
-          "compare_pct": 0.2406,
-          "bucket_psi": 0.0329
+          "bin_low": 508.0,
+          "bin_high": 542.0,
+          "baseline_pct": 0.1004,
+          "compare_pct": 0.0706,
+          "bucket_psi": 0.0105
         },
         {
-          "bin_low": 591.0,
-          "bin_high": 707.5,
-          "baseline_pct": 0.3024,
-          "compare_pct": 0.2104,
-          "bucket_psi": 0.0334
+          "bin_low": 542.0,
+          "bin_high": 574.0,
+          "baseline_pct": 0.0992,
+          "compare_pct": 0.0632,
+          "bucket_psi": 0.0162
         },
         {
-          "bin_low": 707.5,
-          "bin_high": 824.0,
-          "baseline_pct": 0.1186,
-          "compare_pct": 0.1726,
-          "bucket_psi": 0.0203
+          "bin_low": 574.0,
+          "bin_high": 605.0,
+          "baseline_pct": 0.103,
+          "compare_pct": 0.0686,
+          "bucket_psi": 0.014
         },
         {
-          "bin_low": 824.0,
-          "bin_high": 940.5,
-          "baseline_pct": 0.0222,
-          "compare_pct": 0.1404,
-          "bucket_psi": 0.218
+          "bin_low": 605.0,
+          "bin_high": 638.0,
+          "baseline_pct": 0.0992,
+          "compare_pct": 0.0604,
+          "bucket_psi": 0.0193
         },
         {
-          "bin_low": 940.5,
-          "bin_high": 1057.0,
-          "baseline_pct": 0.0016,
-          "compare_pct": 0.0616,
-          "bucket_psi": 0.219
+          "bin_low": 638.0,
+          "bin_high": 680.0,
+          "baseline_pct": 0.1,
+          "compare_pct": 0.0774,
+          "bucket_psi": 0.0058
         },
         {
-          "bin_low": 1057.0,
-          "bin_high": 1173.5,
-          "baseline_pct": 0.0,
-          "compare_pct": 0.0096,
-          "bucket_psi": 0.088
+          "bin_low": 680.0,
+          "bin_high": 735.0,
+          "baseline_pct": 0.1008,
+          "compare_pct": 0.0848,
+          "bucket_psi": 0.0028
         },
         {
-          "bin_low": 1173.5,
+          "bin_low": 735.0,
           "bin_high": 1290.0,
-          "baseline_pct": 0.0,
-          "compare_pct": 0.0016,
-          "bucket_psi": 0.0118
+          "baseline_pct": 0.1002,
+          "compare_pct": 0.347,
+          "bucket_psi": 0.3066
         }
       ]
     }
