@@ -92,6 +92,12 @@ The threshold simulation supports a concrete operating recommendation:
 
 > Lowering name-match tolerance from 90 to 83 while increasing IP-risk tolerance to 80 reduces manual reviews while keeping fraud leakage inside the team's risk appetite. The decision is paired with weekly vendor drift monitoring so future performance drops do not remain invisible.
 
+## Portfolio Positioning
+
+Use this framing when walking a recruiter, hiring manager, or technical interviewer through the repository:
+
+> I did not want to build just another basic data analysis dashboard. I engineered an automated KYC control framework that addresses the real operational trade-offs digital banks face. It actively tracks vendor performance drift using rolling Population Stability Index calculations, isolates toxic rules to save hundreds of operational review hours, and implements an automated fallback cascade routing layer to protect onboarding conversion when primary APIs degrade.
+
 ## Model Limitations and Production Gap
 
 This project demonstrates control logic and governance patterns on synthetic data. Four gaps exist between this model and a production deployment:

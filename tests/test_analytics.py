@@ -2,6 +2,9 @@ import sys
 import unittest
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
+
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -55,6 +58,9 @@ def make_row(**overrides):
 
 
 class AnalyticsTests(unittest.TestCase):
+    def setUp(self):
+        self.engine = AdvancedRiskEngine(false_positive_tolerance=85.0, max_queue_burden_hours=100.0)
+
     def test_lookback_returns_zero_for_clean_data(self):
         clean = [make_row(engine_action="instant_approve", commercial_po_box=0, sanctions_hit=0)]
         result = lookback_population(clean)
@@ -156,7 +162,6 @@ class AnalyticsTests(unittest.TestCase):
         self.assertIn("fallback vendor", alert["action"])
 
     def test_advanced_engine_stochastic_toxic_rule_isolation(self):
-        engine = AdvancedRiskEngine(false_positive_tolerance=85.0, max_queue_burden_hours=100.0)
         mock_pipeline_rules = [
             {
                 "rule_id": "R_099_WEB_VELOCITY_HIGH_FRICTION",
@@ -170,25 +175,54 @@ class AnalyticsTests(unittest.TestCase):
             },
         ]
 
-        targets = engine.identify_optimization_targets(mock_pipeline_rules)
+        targets = self.engine.identify_optimization_targets(mock_pipeline_rules)
 
         self.assertIn("R_099_WEB_VELOCITY_HIGH_FRICTION", targets)
         self.assertNotIn("R_001_SSN_DETERMINISTIC_MATCH", targets)
 
     def test_advanced_engine_vendor_cascade_logic(self):
-        engine = AdvancedRiskEngine()
         mock_data = [
             {"user_id": "U001", "vendor_latency_ms": 600, "kyc_vendor_score": 0.80},
             {"user_id": "U002", "vendor_latency_ms": 120, "kyc_vendor_score": 0.95},
             {"user_id": "U003", "vendor_latency_ms": 200, "kyc_vendor_score": 0.10},
         ]
 
-        processed = engine.execute_vendor_cascade_routing(mock_data)
+        processed = self.engine.execute_vendor_cascade_routing(mock_data)
         routing = {row["user_id"]: row["assigned_routing_tier"] for row in processed}
 
         self.assertEqual(routing["U001"], "CHALLENGER_SECONDARY_CASCADE")
         self.assertEqual(routing["U002"], "CHAMPION_PRIMARY_PATH")
         self.assertEqual(routing["U003"], "CHALLENGER_SECONDARY_CASCADE")
+
+    def test_malformed_production_data_handling(self):
+        corrupted_mock_data = pd.DataFrame({
+            "user_id": ["U_CRASH_1", "U_CRASH_2"],
+            "vendor_latency_ms": [None, np.nan],
+            "kyc_vendor_score": [None, 0.95],
+        })
+
+        processed_df = self.engine.execute_vendor_cascade_routing(corrupted_mock_data)
+
+        first_route = processed_df.loc[
+            processed_df["user_id"] == "U_CRASH_1", "assigned_routing_tier"
+        ].values[0]
+        second_route = processed_df.loc[
+            processed_df["user_id"] == "U_CRASH_2", "assigned_routing_tier"
+        ].values[0]
+        self.assertEqual(first_route, "CHALLENGER_SECONDARY_CASCADE")
+        self.assertEqual(second_route, "CHALLENGER_SECONDARY_CASCADE")
+
+    def test_malformed_dict_payload_handling(self):
+        corrupted_mock_data = [
+            {"user_id": "U_BAD_1", "vendor_latency_ms": "timeout", "kyc_vendor_score": "n/a"},
+            {"user_id": "U_BAD_2"},
+        ]
+
+        processed = self.engine.execute_vendor_cascade_routing(corrupted_mock_data)
+        routing = {row["user_id"]: row["assigned_routing_tier"] for row in processed}
+
+        self.assertEqual(routing["U_BAD_1"], "CHALLENGER_SECONDARY_CASCADE")
+        self.assertEqual(routing["U_BAD_2"], "CHALLENGER_SECONDARY_CASCADE")
 
 
 if __name__ == "__main__":

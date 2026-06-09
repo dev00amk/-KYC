@@ -1,3 +1,4 @@
-# The shipped scripts use only the Python standard library.
-# Optional: serve dashboard/ with `python -m http.server`.
-# Optional notebook exploration can use pandas/numpy, but CI and core scripts do not require them.
+numpy>=1.26
+pandas>=2.2
+
+# Serve dashboard/ with `python -m http.server`.

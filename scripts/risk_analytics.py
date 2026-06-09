@@ -1,3 +1,11 @@
+"""
+=========================================================================================
+SYSTEM COMPONENT: IDENTITY RISK ENGINE AND CASCADE ROUTING CONTROLLER
+MODULE VERSION:   2026.1.5
+GOVERNANCE:       SR 11-7 / FFIEC BSA/AML ALIGNED REGULATORY SAFETY LIMITS
+=========================================================================================
+"""
+
 import argparse
 import csv
 import json
@@ -6,8 +14,14 @@ from collections import defaultdict
 from math import log
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(levelname)s] - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] [TRACE_ID:%(process)d] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 ACTIVE_POLICY = {
     "name_match_threshold": 83,
@@ -180,23 +194,34 @@ class AdvancedRiskEngine(RiskEngine):
 
     def execute_vendor_cascade_routing(self, applications):
         """
-        Route applications to a challenger cascade when primary vendor SLA or score quality degrades.
+        Execute Champion/Challenger identity cascade routing.
 
-        Accepts either a list of dictionaries or a pandas-like DataFrame. This keeps CI lightweight
-        while still allowing vectorized use in analyst notebooks.
+        Defensively intercepts missing, null, or malformed third-party API payloads and routes
+        corrupted rows to the strict fallback path instead of dropping them or raising errors.
         """
         logging.info("Initializing Champion/Challenger Identity Cascade Diagnostics.")
-        if hasattr(applications, "copy") and hasattr(applications, "__setitem__") and "vendor_latency_ms" in applications:
-            processed = applications.copy()
+        if isinstance(applications, pd.DataFrame):
+            processed = applications.copy(deep=True)
+            if "vendor_latency_ms" not in processed:
+                processed["vendor_latency_ms"] = 9999.0
+            if "kyc_vendor_score" not in processed:
+                processed["kyc_vendor_score"] = 0.0
+
+            processed["vendor_latency_ms"] = pd.to_numeric(
+                processed["vendor_latency_ms"], errors="coerce"
+            ).fillna(9999.0)
+            processed["kyc_vendor_score"] = pd.to_numeric(
+                processed["kyc_vendor_score"], errors="coerce"
+            ).fillna(0.0)
+
             degraded_mask = (
                 (processed["vendor_latency_ms"] > self.latency_threshold_ms)
                 | (processed["kyc_vendor_score"] < self.min_vendor_score)
             )
-            processed["assigned_routing_tier"] = degraded_mask.map(
-                {
-                    True: "CHALLENGER_SECONDARY_CASCADE",
-                    False: "CHAMPION_PRIMARY_PATH",
-                }
+            processed["assigned_routing_tier"] = np.where(
+                degraded_mask,
+                "CHALLENGER_SECONDARY_CASCADE",
+                "CHAMPION_PRIMARY_PATH",
             )
             cascade_count = int(degraded_mask.sum())
         else:
@@ -204,9 +229,13 @@ class AdvancedRiskEngine(RiskEngine):
             cascade_count = 0
             for application in applications:
                 routed = dict(application)
+                latency = self._coerce_float(routed.get("vendor_latency_ms"), 9999.0)
+                score = self._coerce_float(routed.get("kyc_vendor_score"), 0.0)
+                routed["vendor_latency_ms"] = latency
+                routed["kyc_vendor_score"] = score
                 degraded = (
-                    routed.get("vendor_latency_ms", 0) > self.latency_threshold_ms
-                    or routed.get("kyc_vendor_score", 1.0) < self.min_vendor_score
+                    latency > self.latency_threshold_ms
+                    or score < self.min_vendor_score
                 )
                 routed["assigned_routing_tier"] = (
                     "CHALLENGER_SECONDARY_CASCADE" if degraded else "CHAMPION_PRIMARY_PATH"
@@ -216,10 +245,22 @@ class AdvancedRiskEngine(RiskEngine):
 
         if cascade_count:
             logging.warning(
-                "[SLA BREACH] Automatically rerouted %s applications to fallback pipeline.",
+                "[SLA BREACH DETECTED] Programmatically rerouted %s applications to fallback pipeline.",
                 cascade_count,
             )
         return processed
+
+    @staticmethod
+    def _coerce_float(value, fallback):
+        try:
+            if value is None:
+                return fallback
+            numeric = float(value)
+            if numeric != numeric:
+                return fallback
+            return numeric
+        except (TypeError, ValueError):
+            return fallback
 
     def identify_optimization_targets(self, rule_metrics):
         toxic_rules = []
